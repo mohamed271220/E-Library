@@ -1,0 +1,26 @@
+Backend (Node.js, Express, and Mongoose):
+API Endpoints:
+
+Create API endpoints for managing user authentication, book information retrieval, and user progress tracking. (JWT)
+User Model:
+
+Update your User model in Mongoose to include fields for storing the user's reading progress, bookmarks, and annotations.
+Serve PDFs:
+
+Serve PDFs using Express. You may want to use a protected route to ensure only authenticated users can access the PDFs.
+Frontend (React with Tailwind CSS):
+User Authentication:
+
+Implement user authentication in your React app, and ensure that users are logged in before accessing the PDF viewer.
+PDF Viewer Component:
+
+Create a React component that uses a PDF.js-based library (such as react-pdf) to render PDFs in your application.
+Progress Tracking:
+
+Implement logic to track and update the user's progress as they navigate through the PDF. This could involve making API calls to update the backend with the current page or percentage completed.
+Bookmarks and Annotations:
+
+Add features for users to add bookmarks or annotations within the PDF. These changes should be stored on the backend associated with the user and the specific book.
+Integration with Backend:
+
+Connect your React frontend to your Node.js backend using API calls. Use libraries like Axios to make HTTP requests to your backend endpoints for user authentication, progress tracking, and retrieving PDFs.
