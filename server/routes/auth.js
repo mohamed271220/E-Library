@@ -3,14 +3,9 @@ const { body } = require("express-validator");
 const authController = require("../controllers/auth");
 const fileUpload = require("../middleware/file-upload");
 const isUser = require("../middleware/is-auth");
-// const passport = require("passport");
 const router = express.Router();
 
-
-
-
 router.get("/user/:id", isUser, authController.getUser);
-
 router.post(
   "/login",
   [

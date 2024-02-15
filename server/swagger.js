@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       {
-        url: "${import.meta.env.VITE_REACT_APP_API_URL}",
+        url: "http://localhost:3000",
       },
     ],
   },
