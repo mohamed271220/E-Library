@@ -8,7 +8,7 @@ const bookSchema = new Schema({
     image: { type: String, required: true, min: 2, max: 500 },
     code: {
         type: mongoose.Types.ObjectId,
-        ref: "bookCode",
+        ref: "subjectCode",
     },
     department: {
         type: mongoose.Types.ObjectId,

@@ -94,7 +94,7 @@ app.post("/upload", isAdmin, filesUpload.array("photos", 40), async (req, res) =
 });
 
 app.use("/api/auth", require("./routes/auth"));
-
+app.use("/api/news", require("./routes/news"));
 
 
 swagger(app);

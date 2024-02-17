@@ -26,6 +26,20 @@ module.exports = async (req, res, next) => {
       return next(error);
     }
 
+    try {
+      const user = await User.findById(decodedToken.userId);
+      if (!user) {
+        const error = new Error("user not authorized to make this request");
+        error.statusCode = 422;
+        return next(error);
+      }
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      return next(err);
+    }
+
     req.userId = decodedToken.userId;
     next();
   } catch (err) {
