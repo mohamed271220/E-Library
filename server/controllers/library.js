@@ -10,7 +10,8 @@ search by subject code)
 //TODO : get a book
 
 const Book = require("../models/book");
-
+const Department = require("../models/department");
+const Subject = require("../models/subjectCode");
 
 exports.getBooks = async (req, res) => {
     const { page = 1, limit = 10, department, semester, subjectCode, author, title } = req.query;
@@ -38,7 +39,6 @@ exports.getBooks = async (req, res) => {
         }
 
         const books = await Book.find(filter)
-            .select('-editions')
             .limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
@@ -53,7 +53,10 @@ exports.getBooks = async (req, res) => {
             currentPage: page
         });
     } catch (error) {
-        res.status(500).json({ error: error.toString() });
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 }
 
@@ -62,11 +65,11 @@ exports.getBook = async (req, res) => {
     try {
         let book = await Book.findById(bookId).select('-editions');
         res.status(200).json({ book });
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
         }
-        next(err);
+        next(error);
     }
 }
 
@@ -79,8 +82,7 @@ exports.searchBooks = async (req, res) => {
                 { author: { $regex: search, $options: "i" } },
                 { code: { $regex: search, $options: "i" } }
             ]
-        }).select('-editions')
-            .limit(limit * 1)
+        }).limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
 
@@ -94,7 +96,57 @@ exports.searchBooks = async (req, res) => {
             currentPage: page
         });
     } catch (error) {
-        res.status(500).json({ error: error.toString() });
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 }
 
+exports.getDepartments = async (req, res, next) => {
+    try {
+        const departments = await Department.find();
+        res.status(200).json({ departments });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getDepartment = async (req, res, next) => {
+    try {
+        const { departmentId } = req.params;
+        const department = await Department.findById(departmentId);
+        res.status(200).json({ department });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+exports.getSubjects = async (req, res, next) => {
+    try {
+        const subjects = await Subject.find();
+        res.status(200).json({ subjects });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getSubject = async (req, res, next) => {
+    try {
+        const { subjectId } = req.params;
+        const subject = await Subject.findById(subjectId);
+        res.status(200).json({ subject });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}

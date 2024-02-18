@@ -60,7 +60,7 @@ exports.signup = async (req, res, next) => {
     name,
     email,
     password: hashedPassword,
-    image: req.file.path.replace("\\", "/") || "",
+    image: image,
   });
 
   try {
@@ -95,12 +95,21 @@ exports.signup = async (req, res, next) => {
 
 // USER LOGIN
 exports.login = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   const email = req.body.email;
   const password = req.body.password;
   console.log(email + " " + password);
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email }).populate("address");
+    existingUser = await User.findOne({ email: email });
     // console.log(existingUser);
   } catch (err) {
     const error = new Error("Login failed");

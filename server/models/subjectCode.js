@@ -3,8 +3,15 @@ const Schema = mongoose.Schema;
 
 const subjectCodeSchema = new Schema({
     code: { type: String, required: true, min: 2, max: 50 },
-    subject: { type: String, required: true, min: 2, max: 50 },
-    semester: { type: Number, required: true },
+    name: { type: String, required: true, min: 2, max: 50 },
+    department: {
+        type: Schema.Types.ObjectId,
+        ref: "Department",
+    },
+    semester: {
+        type: String,
+        enum: ["1st", "2nd"]
+    },
     books: [{ type: Schema.Types.ObjectId, ref: "Book" }]
 }, {
     timestamps: true,
