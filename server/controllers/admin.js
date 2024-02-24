@@ -405,10 +405,61 @@ exports.deleteSubject = async (req, res, next) => {
     }
 }
 exports.addEvent = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { imageUrl, title, description } = req.body;
+        const subject = new Event({ imageUrl, title, description });
+        await subject.save();
+        res.status(201).json({ message: "Event created successfully" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 }
 exports.editEvent = async (req, res, next) => {
+    try {
+        const { eventId } = req.params;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { imageUrl, title, description } = req.body;
+
+        const event = await Event.findById(eventId);
+        if (!event) {
+            throw new Error('Event not found');
+        }
+        if (imageUrl) event.imageUrl = imageUrl;
+        if (title) event.title = title;
+        if (description) event.description = description;
+        await event.save();
+        res.status(200).json({ message: "Event edited successfully" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 }
 
 exports.deleteEvent = async (req, res, next) => {
-
+    try {
+        const { eventId } = req.params;
+        const event = await Event.findById(eventId);
+        if (!event) {
+            throw new Error('event not found');
+        }
+        await event.remove();
+        res.status(200).json({ message: "event deleted successfully" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 }
