@@ -18,12 +18,6 @@ const userSchema = new Schema(
             enum: ["user", "admin"],
             default: "user",
         },
-        borrowedBooks: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: "Book"
-            }
-        ],
         readingHistory: [
             {
                 bookId: {
@@ -32,12 +26,6 @@ const userSchema = new Schema(
                 },
                 editionNumber: Number,
                 startedReading: Date,
-            },
-        ],
-        booksPublished: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: "Book",
             },
         ],
 

@@ -6,12 +6,6 @@ const departmentSchema = new Schema({
         type: String,
         required: true,
     },
-    subjectCodes: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: "SubjectCode",
-        },
-    ],
     books: [
         {
             type: mongoose.Types.ObjectId,

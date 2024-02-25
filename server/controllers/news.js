@@ -37,15 +37,3 @@ exports.getPost = async (req, res, next) => {
     }
 }
 
-exports.getEvents = async (req, res, next) => {
-    try {
-        let events = await Event.find();
-        res.status(200).json({ events });
-    }
-    catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    }
-};

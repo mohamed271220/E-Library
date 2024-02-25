@@ -60,15 +60,14 @@ exports.addBook = async (req, res, next) => {
         error.data = errors.array();
         throw error;
     }
-    const { title, author, description, image, code, departmentId, edition } = req.body;
+    const { title, author, description, image, department, edition } = req.body;
     try {
         const book = new Book({
             title,
             author,
             description,
             image,
-            code,
-            departmentId,
+            department,
             edition: {
                 editionNumber: edition.editionNumber,
                 publicationDate: edition.publicationDate,
@@ -343,119 +342,6 @@ exports.deleteDepartment = async (req, res, next) => {
         }
         await department.remove();
         res.status(200).json({ message: "Department deleted successfully" });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.addSubject = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { name, code, semester, department } = req.body;
-        const subject = new SubjectCode({ code, name, department, semester });
-        await subject.save();
-        res.status(201).json({ message: "Subject created successfully" });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.editSubject = async (req, res, next) => {
-    try {
-        const { subjectId } = req.params;
-        const { name, code, semester, department } = req.body;
-        const subject = await SubjectCode.findById(subjectId);
-        if (!subject) {
-            throw new Error('Subject not found');
-        }
-        if (name) subject.name = name;
-        if (code) subject.code = code;
-        if (semester) subject.semester = semester;
-        if (department) subject.department = department;
-        await subject.save();
-        res.status(200).json({ message: "Subject edited successfully" })
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.deleteSubject = async (req, res, next) => {
-    try {
-        const { subjectId } = req.params;
-        const subject = await SubjectCode.findById(subjectId);
-        if (!subject) {
-            throw new Error('Subject not found');
-        }
-        await subject.remove();
-        res.status(200).json({ message: "Subject deleted successfully" });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.addEvent = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { imageUrl, title, description } = req.body;
-        const subject = new Event({ imageUrl, title, description });
-        await subject.save();
-        res.status(201).json({ message: "Event created successfully" });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.editEvent = async (req, res, next) => {
-    try {
-        const { eventId } = req.params;
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { imageUrl, title, description } = req.body;
-
-        const event = await Event.findById(eventId);
-        if (!event) {
-            throw new Error('Event not found');
-        }
-        if (imageUrl) event.imageUrl = imageUrl;
-        if (title) event.title = title;
-        if (description) event.description = description;
-        await event.save();
-        res.status(200).json({ message: "Event edited successfully" });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-exports.deleteEvent = async (req, res, next) => {
-    try {
-        const { eventId } = req.params;
-        const event = await Event.findById(eventId);
-        if (!event) {
-            throw new Error('event not found');
-        }
-        await event.remove();
-        res.status(200).json({ message: "event deleted successfully" });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;

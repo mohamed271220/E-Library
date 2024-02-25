@@ -127,26 +127,4 @@ exports.getDepartment = async (req, res, next) => {
     }
 }
 
-exports.getSubjects = async (req, res, next) => {
-    try {
-        const subjects = await Subject.find();
-        res.status(200).json({ subjects });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-exports.getSubject = async (req, res, next) => {
-    try {
-        const { subjectId } = req.params;
-        const subject = await Subject.findById(subjectId);
-        res.status(200).json({ subject });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
+
