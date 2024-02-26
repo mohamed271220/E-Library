@@ -1,11 +1,11 @@
 const isAdmin = require('../../middlewares/is-admin');
 const express = require('express');
-const adminController = require('../../controllers/admin');
+const usersController = require('../../controllers/admin/users');
 
 const router = express.Router();
 
-router.get('/', isAdmin, adminController.getUsers);
-router.put('/:userId', isAdmin, adminController.makeUserAdmin);
-router.delete('/:userId', isAdmin, adminController.deleteUser);
+router.get('/', isAdmin, usersController.getUsers);
+router.put('/:userId', isAdmin, usersController.makeUserAdmin);
+router.delete('/:userId', isAdmin, usersController.deleteUser);
 
 module.exports = router;

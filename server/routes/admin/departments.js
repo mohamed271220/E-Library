@@ -1,12 +1,12 @@
 const isAdmin = require('../../middlewares/is-admin');
 const express = require('express');
-const adminController = require('../../controllers/admin');
+const departmentsController = require('../../controllers/admin/departments');
 
 const router = express.Router();
 
-router.post('/', isAdmin, adminController.addDepartment);
-router.put('/:departmentId', isAdmin, adminController.editDepartment);
-router.delete('/:departmentId', isAdmin, adminController.deleteDepartment);
+router.post('/', isAdmin, departmentsController.addDepartment);
+router.put('/:departmentId', isAdmin, departmentsController.editDepartment);
+router.delete('/:departmentId', isAdmin, departmentsController.deleteDepartment);
 
 
 module.exports = router;

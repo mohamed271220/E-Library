@@ -10,6 +10,11 @@ const thesisSchema = new Schema({
     year: { type: Number, required: true },
     abstract: { type: String, required: true },
     pdfLink: { type: String, required: false },
+    image: { type: String, required: false },
+    supervisor: { type: String, required: false, min: 2, max: 100 },
+    keywords: [{ type: String }],
+    doi: { type: String },
+    citations: { type: Number, default: 0 },
 }, {
     timestamps: true,
 });
@@ -23,4 +28,9 @@ module.exports = mongoose.model("Thesis", thesisSchema);
 // department is the department within the university that supervised the thesis.
 // year is the year the thesis was submitted.
 // abstract is a brief summary of the thesis.
+// image is a link to an image representing the thesis.
 // pdfLink is a link to the full text of the thesis in PDF format.
+// supervisor is the thesis advisor.
+// keywords are important words or phrases associated with the thesis.
+// doi is the Digital Object Identifier, a unique identifier for the thesis.
+// citations is the number of times this thesis has been cited by other works.
