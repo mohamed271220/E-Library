@@ -1,41 +1,18 @@
-/* //TODO :
-get all books
-with filters (indicated by query parameters)
-(like max , department, semester, subject code, author
-search by title
-search by author
-search by subject code)
-
-*/
-//TODO : get a book
-
 const Book = require("../models/book");
 const Department = require("../models/department");
-const Subject = require("../models/subjectCode");
+const Encyclopedia = require("../models/encyclopedia");
+const Journal = require("../models/journal");
+const Research = require("../models/research");
+const Thesis = require("../models/thesis");
+
 
 exports.getBooks = async (req, res) => {
-    const { page = 1, limit = 10, department, semester, subjectCode, author, title } = req.query;
+    const { page = 1, limit = 10, department } = req.query;
     try {
         let filter = {};
 
         if (department) {
             filter.department = department;
-        }
-
-        if (semester) {
-            filter.semester = semester;
-        }
-
-        if (subjectCode) {
-            filter.subjectCode = subjectCode;
-        }
-
-        if (author) {
-            filter.author = author;
-        }
-
-        if (title) {
-            filter.title = title;
         }
 
         const books = await Book.find(filter)
@@ -47,7 +24,7 @@ exports.getBooks = async (req, res) => {
         const count = await Book.countDocuments(filter);
 
         // return response with books, total pages, and current page
-        res.json({
+        res.status(200).json({
             books,
             totalPages: Math.ceil(count / limit),
             currentPage: page
@@ -63,7 +40,7 @@ exports.getBooks = async (req, res) => {
 exports.getBook = async (req, res) => {
     const { bookId } = req.params;
     try {
-        let book = await Book.findById(bookId).select('-editions');
+        let book = await Book.findById(bookId);
         res.status(200).json({ book });
     } catch (error) {
         if (!error.statusCode) {
@@ -80,7 +57,6 @@ exports.searchBooks = async (req, res) => {
             $or: [
                 { title: { $regex: search, $options: "i" } },
                 { author: { $regex: search, $options: "i" } },
-                { code: { $regex: search, $options: "i" } }
             ]
         }).limit(limit * 1)
             .skip((page - 1) * limit)
@@ -90,7 +66,7 @@ exports.searchBooks = async (req, res) => {
         const count = await Book.countDocuments();
 
         // return response with books, total pages, and current page
-        res.json({
+        res.status(200).json({
             books,
             totalPages: Math.ceil(count / limit),
             currentPage: page
@@ -128,3 +104,246 @@ exports.getDepartment = async (req, res, next) => {
 }
 
 
+
+exports.getEncyclopedias = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const encyclopedias = await Encyclopedia.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        const count = await Encyclopedia.countDocuments();
+
+        res.status(200).json({
+            encyclopedias,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getEncyclopedia = async (req, res, next) => {
+    try {
+        const { encyclopediaId } = req.params;
+        const encyclopedia = await Encyclopedia.findById(encyclopediaId);
+        res.status(200).json({ encyclopedia });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.searchEncyclopedias = async (req, res, next) => {
+    try {
+        const { search, page = 1, limit = 10 } = req.query;
+        let encyclopedias = await Encyclopedia.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { publisher: { $regex: search, $options: "i" } },
+                { subject: { $regex: search, $options: "i" } },
+            ]
+        }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Encyclopedia.countDocuments();
+        res.status(200).json({
+            encyclopedias,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getJournals = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const journals = await Journal.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Journal.countDocuments();
+        res.status(200).json({
+            journals,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getJournal = async (req, res, next) => {
+    try {
+        const { journalId } = req.params;
+        const journal = await Journal.findById(journalId);
+        res.status(200).json({ journal });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.searchJournals = async (req, res, next) => {
+    try { 
+        const { search, page = 1, limit = 10 } = req.query;
+        let journals = await Journal.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { publisher: { $regex: search, $options: "i" } },
+                { subject: { $regex: search, $options: "i" } },
+            ]
+        }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Journal.countDocuments();
+        res.status(200).json({
+            journals,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getResearches = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const researches = await Research.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Research.countDocuments();
+        res.status(200).json({
+            researches,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getResearch = async (req, res, next) => {
+    try {
+        const { researchId } = req.params;
+        const research = await Research.findById(researchId);
+        res.status(200).json({ research });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.searchResearches = async (req, res, next) => {
+    try {
+        const { search, page = 1, limit = 10 } = req.query;
+        let researches = await Research.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { author: { $regex: search, $options: "i" } },
+                { specialization: { $regex: search, $options: "i" } },
+                { keywords: { $in: [new RegExp(search, "i")] } }
+            ]}).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+            const count = await Research.countDocuments();
+            res.status(200).json({
+                researches,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page
+            });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getTheses = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const theses = await Thesis.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Thesis.countDocuments();
+        res.status(200).json({
+            theses,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.getThesis = async (req, res, next) => {
+    try {
+        const { thesisId } = req.params;
+        const thesis = await Thesis.findById(thesisId);
+        res.status(200).json({ thesis });
+     }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+exports.searchTheses = async (req, res, next) => {
+    try {
+        const { search, page = 1, limit = 10 } = req.query;
+        let theses = await Thesis.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { author: { $regex: search, $options: "i" } },
+                { university : { $regex: search, $options: "i" } },
+                { keywords: { $in: [new RegExp(search, "i")] } },
+                ]}).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+                const count = await Thesis.countDocuments();
+                res.status(200).json({
+                    theses,
+                    totalPages: Math.ceil(count / limit),
+                    currentPage: page
+                });
+    }
+    catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}

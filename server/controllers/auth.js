@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const Address = require("../models/address");
 const { validationResult, body } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
@@ -28,7 +27,6 @@ exports.getUser = async (req, res, next) => {
 // SIGNUP
 exports.signup = async (req, res, next) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     const error = new Error("Validation failed");
     error.statusCode = 422;
@@ -45,7 +43,7 @@ exports.signup = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
-    const error = new Error("Signup failed");
+    const error = new Error(err);
     error.statusCode = 500;
     return next(error);
   }
@@ -78,10 +76,10 @@ exports.signup = async (req, res, next) => {
         email: createdUser.email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "5h" }
     );
   } catch (err) {
-    const error = new Error("Signup failed");
+    const error = new Error(err);
     error.statusCode = 500;
     return next(error);
   }
@@ -103,10 +101,8 @@ exports.login = async (req, res, next) => {
     error.data = errors.array();
     throw error;
   }
-
   const email = req.body.email;
   const password = req.body.password;
-  console.log(email + " " + password);
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });

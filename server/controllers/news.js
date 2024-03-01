@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const Post = require("../models/post")
-const Event = require("../models/event")
 
 exports.getPosts = async (req, res, next) => {
     const { tag, search, limit } = req.query;

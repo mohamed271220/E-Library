@@ -1,8 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const authController = require("../controllers/auth");
-const fileUpload = require("../middleware/file-upload");
-const isUser = require("../middleware/is-auth");
+const isUser = require("../middlewares/is-auth");
 const router = express.Router();
 
 router.get("/user/:id", isUser, authController.getUser);
@@ -20,7 +19,6 @@ router.post(
 
 router.post(
   "/signup",
-  fileUpload.array("images", 1),
   [
     body("email").isEmail().withMessage("Please enter a valid email"),
     body("password").trim().isLength({ min: 5 }),

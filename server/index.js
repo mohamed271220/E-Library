@@ -5,20 +5,13 @@ const helmet = require('helmet');
 const cors = require('cors');
 const multer = require('multer');
 const mongoose = require('mongoose');
-const isAdmin = require('./middleware/isAdmin');
+const isAdmin = require('./middlewares/is-admin');
 const filesUpload = multer({ dest: "uploads/images" });
 const path = require("path");
 const { Storage } = require("@google-cloud/storage");
 require('dotenv').config();
 
 const swagger = require('./swagger');
-
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
-const postRoutes = require('./routes/post');
-const bookRoutes = require('./routes/book');
 
 
 // Initialize app
@@ -92,9 +85,13 @@ app.post("/upload", isAdmin, filesUpload.array("photos", 40), async (req, res) =
         }
     }
 });
-
+// TESTED: OK
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/news", require("./routes/news"));
+app.use("/api/user", require("./routes/user"));
+app.use("/api/post", require("./routes/news"));
+app.use("/api/library", require("./routes/library"));
+app.use("/api/admin", require("./routes/admin"));
 
 
 swagger(app);

@@ -1,6 +1,6 @@
 const isAdmin = require('../../middlewares/is-admin');
 const express = require('express');
-const adminController = require('../../controllers/admin');
+const adminController = require('../../controllers/admin/theses');
 
 const router = express.Router();
 
