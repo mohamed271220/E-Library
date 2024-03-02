@@ -1,68 +1,130 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+* {
+  font-family: "Poppins", "sans-serif";
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+#root {
+  width: 100%;
+}
+:root {
+  --light-grey: #f6f9fc;
+  --dark-terminal-color: #0a2540;
+  --accent-color: #635bff;
+  --radius: 3px;
+}
+
+@layer components {
+  .max-container {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .input {
+    @apply sm:flex-1 max-sm:w-full text-base leading-normal text-slate-gray pl-5 max-sm:p-5 outline-none sm:border-none border max-sm:border-slate-gray max-sm:rounded-full;
+  }
+}
+
+@layer utilities {
+
+  .td {
+    @apply text-slate-gray text-base font-montserrat font-normal p-0 px-4 border-none text-[2vh];
+  }
+
+  .padding {
+    @apply sm:px-16 px-8 sm:py-24 py-12;
+  }
+
+  .padding-sec {
+    @apply md:py-[56px] py-[37px] md:px-[121px] px-[80px] flex flex-col gap-3 justify-center items-center;
+  }
+
+  .padding-x {
+    @apply sm:px-16 px-8;
+  }
+
+  .padding-y {
+    @apply sm:py-24 py-12;
+  }
+
+  .padding-l {
+    @apply sm:pl-16 pl-8;
+  }
+
+  .padding-r {
+    @apply sm:pr-16 pr-8;
+  }
+
+  .padding-t {
+    @apply sm:pt-24 pt-12;
+  }
+
+  .padding-b {
+    @apply sm:pb-24 pb-12;
+  }
+
+  .info-text {
+    @apply font-montserrat text-slate-gray text-lg leading-7;
+  }
+}
+
+.error-block {
+  background-color: #f0d9e5;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 4px;
+  color: #890b35;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  gap: 2rem;
+  align-items: center;
+  text-align: left;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.error-block-icon {
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  color: #fff;
+  background-color: #890b35;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.error-block h2 {
+  color: inherit;
+  font-size: 1.25rem;
+  margin: 0;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.error-block p {
+  margin: 0;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: #e0e0e0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+/* Handle on Hover */
+::-webkit-scrollbar-track:hover {
+  background-color: #555;
+}
+
