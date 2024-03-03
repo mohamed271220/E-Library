@@ -19,9 +19,9 @@ export default {
         montserrat: ["Montserrat", "sans-serif"],
       },
       colors: {
-        primary: "#F9F1E7",
-        secondary: "#FFF3E3",
-        "dim-yellow": "#B88E2F",
+        primary: "#cdccde",
+        secondary: "#3385ff",
+        "dim-blue": "#06005c",
         "slate-gray": "#6D6D6D",
         "pale-blue": "#F5F6FF",
         "white-400": "rgba(255, 255, 255, 0.80)",
@@ -40,3 +40,16 @@ export default {
   },
   plugins: [],
 };
+
+
+// black: {
+//           100: "#cdccde",
+//           200: "#9b99be",
+//           300: "#6a669d",
+//           400: "#38337d",
+//           500: "#06005c",
+//           600: "#05004a",
+//           700: "#040037",
+//           800: "#020025",
+//           900: "#010012"
+// },

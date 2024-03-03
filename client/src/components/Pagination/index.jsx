@@ -48,7 +48,7 @@ const Pagination = ({
                         Previous
                     </Link>
                 </li>}
-                <li className={currentPage === 1 ? "bg-dim-yellow text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
+                <li className={currentPage === 1 ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
                     <Link href="#" onClick={(e) => { e.preventDefault(); changePage(1); scrollToTop(); }}>
                         1
                     </Link>
@@ -57,7 +57,7 @@ const Pagination = ({
                 {displayedNumbers.map((number, index) => (
                     <li
                         className={`${currentPage === number
-                            ? "bg-dim-yellow text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
+                            ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
                             : " bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
                             }`}
                         key={index}
@@ -68,7 +68,7 @@ const Pagination = ({
                     </li>
                 ))}
                 {end < nPage - 1 && <li>...</li>}
-                <li className={currentPage === nPage ? "bg-dim-yellow text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
+                <li className={currentPage === nPage ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
                     <Link href="#" onClick={(e) => { e.preventDefault(); changePage(nPage); scrollToTop(); }}>
                         {nPage}
                     </Link>
