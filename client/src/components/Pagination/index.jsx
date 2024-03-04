@@ -4,11 +4,8 @@ import { useLocation } from 'react-router-dom';
 
 const Pagination = ({
     currentPage,
-    prePage,
-    numbers,
     changePage,
-    nextPage,
-    nPage
+    totalPages
 }) => {
     const location = useLocation();
     useEffect(() => {
@@ -18,7 +15,7 @@ const Pagination = ({
         if (page !== null && page !== currentPage) {
             changePage(Number(page));
         }
-    }, []);
+    }, [location, currentPage, changePage]);
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -27,57 +24,36 @@ const Pagination = ({
         });
     };
 
-
-    // Define the range of page numbers to display
-    const range = 5;
-    const start = Math.max(2, currentPage - Math.floor(range / 2));
-    const end = Math.min(nPage - 1, start + range - 1);
-
-    // Generate the list of page numbers to display
-    const displayedNumbers = [];
-    for (let i = start; i <= end; i++) {
-        displayedNumbers.push(i);
-    }
-
-
     return (
         <div className="Pagination w-full flex justify-center">
             <ul className="flex flex-row flex-wrap justify-center w-[80%] items-center gap-[2vh]">
-                {currentPage === 1 ? <li className="hidden"></li> : <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
-                    <Link href="#" onClick={(e) => { e.preventDefault(); prePage(); scrollToTop(); }}>
-                        Previous
-                    </Link>
-                </li>}
-                <li className={currentPage === 1 ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
-                    <Link href="#" onClick={(e) => { e.preventDefault(); changePage(1); scrollToTop(); }}>
-                        1
-                    </Link>
-                </li>
-                {start > 2 && <li>...</li>}
-                {displayedNumbers.map((number, index) => (
+                {currentPage > 1 && (
+                    <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
+                        <Link to={`?page=${currentPage - 1}`} onClick={scrollToTop}>
+                            Previous
+                        </Link>
+                    </li>
+                )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
                     <li
                         className={`${currentPage === number
                             ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
                             : " bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
                             }`}
-                        key={index}
+                        key={number}
                     >
-                        <Link href="#" onClick={(e) => { e.preventDefault(); changePage(number); scrollToTop(); }}>
+                        <Link to={`?page=${number}`} onClick={scrollToTop}>
                             {number}
                         </Link>
                     </li>
                 ))}
-                {end < nPage - 1 && <li>...</li>}
-                <li className={currentPage === nPage ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]" : "bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"}>
-                    <Link href="#" onClick={(e) => { e.preventDefault(); changePage(nPage); scrollToTop(); }}>
-                        {nPage}
-                    </Link>
-                </li>
-                {currentPage === nPage || nPage === 0 ? <li className="hidden"></li> : <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
-                    <Link href="#" onClick={(e) => { e.preventDefault(); nextPage(); scrollToTop(); }}>
-                        Next
-                    </Link>
-                </li>}
+                {currentPage < totalPages && (
+                    <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
+                        <Link to={`?page=${currentPage + 1}`} onClick={scrollToTop}>
+                            Next
+                        </Link>
+                    </li>
+                )}
             </ul>
         </div>
     )

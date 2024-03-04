@@ -3,7 +3,7 @@ import { FaBook, FaNewspaper, FaGlobeAmericas, FaJournalWhills, FaFlask, FaGradu
 export const SidebarData = [
   {
     title: "Books",
-    path: "/books",
+    path: "/",
     icon: FaBook,
     cName: "nav-text",
   },

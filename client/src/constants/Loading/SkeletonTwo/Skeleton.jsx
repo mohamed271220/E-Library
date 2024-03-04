@@ -2,7 +2,7 @@
 import "./skeleton.css";
 
 export default function Skeleton({ type }) {
-  const COUNTER = 16;
+  const COUNTER = 9;
   const FeedSkeleton = () => (
     <div className="postSk">
       <div className="postSkImg"></div>

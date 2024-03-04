@@ -6,13 +6,34 @@ const Research = require("../models/research");
 const Thesis = require("../models/thesis");
 
 
+exports.getBook = async (req, res) => {
+    const { bookId } = req.params;
+    try {
+        let book = await Book.findById(bookId);
+        res.status(200).json({ book });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+
 exports.getBooks = async (req, res) => {
-    const { page = 1, limit = 10, department } = req.query;
+    const { page = 1, limit = 10, department, search } = req.query;
     try {
         let filter = {};
 
         if (department) {
             filter.department = department;
+        }
+
+        if (search) {
+            filter.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { author: { $regex: search, $options: "i" } },
+            ];
         }
 
         const books = await Book.find(filter)
@@ -36,49 +57,6 @@ exports.getBooks = async (req, res) => {
         next(error);
     }
 }
-
-exports.getBook = async (req, res) => {
-    const { bookId } = req.params;
-    try {
-        let book = await Book.findById(bookId);
-        res.status(200).json({ book });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-exports.searchBooks = async (req, res) => {
-    const { search, page = 1, limit = 10 } = req.query;
-    try {
-        let books = await Book.find({
-            $or: [
-                { title: { $regex: search, $options: "i" } },
-                { author: { $regex: search, $options: "i" } },
-            ]
-        }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();
-
-        // get total documents in the Book collection 
-        const count = await Book.countDocuments();
-
-        // return response with books, total pages, and current page
-        res.status(200).json({
-            books,
-            totalPages: Math.ceil(count / limit),
-            currentPage: page
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
 exports.getDepartments = async (req, res, next) => {
     try {
         const departments = await Department.find();
@@ -202,7 +180,7 @@ exports.getJournal = async (req, res, next) => {
     }
 }
 exports.searchJournals = async (req, res, next) => {
-    try { 
+    try {
         const { search, page = 1, limit = 10 } = req.query;
         let journals = await Journal.find({
             $or: [
@@ -270,15 +248,16 @@ exports.searchResearches = async (req, res, next) => {
                 { author: { $regex: search, $options: "i" } },
                 { specialization: { $regex: search, $options: "i" } },
                 { keywords: { $in: [new RegExp(search, "i")] } }
-            ]}).limit(limit * 1)
+            ]
+        }).limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
-            const count = await Research.countDocuments();
-            res.status(200).json({
-                researches,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page
-            });
+        const count = await Research.countDocuments();
+        res.status(200).json({
+            researches,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
     }
     catch (error) {
         if (!error.statusCode) {
@@ -313,7 +292,7 @@ exports.getThesis = async (req, res, next) => {
         const { thesisId } = req.params;
         const thesis = await Thesis.findById(thesisId);
         res.status(200).json({ thesis });
-     }
+    }
     catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -328,17 +307,18 @@ exports.searchTheses = async (req, res, next) => {
             $or: [
                 { title: { $regex: search, $options: "i" } },
                 { author: { $regex: search, $options: "i" } },
-                { university : { $regex: search, $options: "i" } },
+                { university: { $regex: search, $options: "i" } },
                 { keywords: { $in: [new RegExp(search, "i")] } },
-                ]}).limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-                const count = await Thesis.countDocuments();
-                res.status(200).json({
-                    theses,
-                    totalPages: Math.ceil(count / limit),
-                    currentPage: page
-                });
+            ]
+        }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = await Thesis.countDocuments();
+        res.status(200).json({
+            theses,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
     }
     catch (error) {
         if (!error.statusCode) {

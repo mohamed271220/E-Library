@@ -16,7 +16,7 @@ const Layout = ({ user, userData, logout, cartTotalQuantity, compareQuantity }) 
 
   return (
     <div className='relative flex flex-col '>
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-12 justify-center">
         <IconContext.Provider value={{ color: "#000" }}>
           <div className="navbar col-span-12">
             <Link to="#" className="menu-bars">
@@ -37,8 +37,8 @@ const Layout = ({ user, userData, logout, cartTotalQuantity, compareQuantity }) 
                 {SidebarData.map((item, index) => {
                   return (
                     <li key={index} className={item.cName}>
-                      <NavLink to={item.path}>
-                        <span><item.icon color="white"/></span>
+                      <NavLink activeClassName="active" to={item.path}>
+                        <span><item.icon color="white" /></span>
                         <span>{item.title}</span>
                       </NavLink>
                     </li>
@@ -61,12 +61,11 @@ const Layout = ({ user, userData, logout, cartTotalQuantity, compareQuantity }) 
               }
             </ul>
           </nav>
-          <div className={sidebar ? "content col-span-9 transform translate-x-64 transition-transform duration-200 px-[3vh]" : "content col-span-9 px-[3vh]"}>
+          <div className={`${sidebar ? "content  col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"} bg-gray-100 bg-opacity-30 w-full h-full`}>
             <ScrollToTop />
             <Outlet />
           </div>
         </IconContext.Provider>
-
       </div>
     </div>
   );
