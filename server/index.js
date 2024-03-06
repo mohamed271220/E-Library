@@ -6,7 +6,7 @@ const cors = require('cors');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const isAdmin = require('./middlewares/is-admin');
-const filesUpload = multer({ dest: "uploads/images" });
+const { imageUpload, pdfUpload } = require('./middlewares/fileUpload');
 const path = require("path");
 const { Storage } = require("@google-cloud/storage");
 require('dotenv').config();
@@ -22,7 +22,8 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: "http://localhost:5173",
+    optionsSuccessStatus: 200,
     credentials: true,
 }));
 
@@ -56,8 +57,7 @@ const bucket = storage.bucket(process.env.GCLOUD_BUCKET_NAME);
 *           description: Error uploading file
 */
 
-app.post("/upload", isAdmin, filesUpload.array("photos", 40), async (req, res) => {
-    console.log(req.files);
+app.post("/upload/photos", imageUpload.array("photos", 2), async (req, res) => {
     const uploadedFiles = [];
     for (let i = 0; i < req.files.length; i++) {
         const { path: filePath, originalname } = req.files[i];
@@ -85,6 +85,38 @@ app.post("/upload", isAdmin, filesUpload.array("photos", 40), async (req, res) =
         }
     }
 });
+
+// Endpoint for PDFs
+app.post("/upload/pdfs", isAdmin, pdfUpload.array("pdfs", 5), async (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+        const { path: filePath, originalname } = req.files[i];
+        const ext = path.extname(originalname);
+        const newPath = filePath + ext;
+
+        if (fs.existsSync(filePath)) {
+            const file = bucket.file(originalname);
+            fs.createReadStream(filePath)
+                .pipe(file.createWriteStream())
+                .on("error", (err) => {
+                    console.error(err);
+                    res.status(500).send("Error uploading file to Google Cloud Storage");
+                })
+                .on("finish", () => {
+                    uploadedFiles.push(`https://storage.googleapis.com/${bucket.name}/${file.name}`);
+                    fs.unlinkSync(filePath);
+                    if (uploadedFiles.length === req.files.length) {
+                        res.status(200).send(uploadedFiles);
+                    }
+                });
+        } else {
+            console.error(`File ${filePath} does not exist`);
+            res.status(500).send(`File ${filePath} does not exist`);
+        }
+    }
+});
+
+
 // TESTED: OK
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/news", require("./routes/news"));

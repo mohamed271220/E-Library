@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, redirect, useNavigate } from "react-router-dom";
 import { SidebarData } from "./SidebarData.js";
 import "./Sidebar.css";
 import { IconContext } from "react-icons";
@@ -9,28 +9,61 @@ import Logo from "../../assets/icons/DNSL.svg";
 import { BiSolidLogInCircle } from 'react-icons/bi'
 import ScrollToTop from "../../hooks/scroll-to-top";
 import AdminAccordion from "../../components/AdminAccordion";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../store/authSlice.js";
+import { IoIosArrowForward } from "react-icons/io";
 
-const Layout = ({ user, userData, logout, cartTotalQuantity, compareQuantity }) => {
+const Layout = () => {
   const [sidebar, setSidebar] = useState(true);
   const showSidebar = () => setSidebar(!sidebar);
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.data);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    if (!storedData || !storedData.token) {
+      if (token) {
+        dispatch(authActions.logout());
+        navigate("/");
+      }
+    }
+  }, [dispatch, navigate, token]);
 
+  const logout = () => {
+    dispatch(authActions.logout());
+    navigate("/books");
+  };
   return (
     <div className='relative flex flex-col '>
       <div className="grid grid-cols-12 justify-center">
         <IconContext.Provider value={{ color: "#000" }}>
-          <div className="navbar col-span-12">
+          <div className="navbar col-span-12 sticky">
             <Link to="#" className="menu-bars">
               <FaIcons.FaBars color="#bac1c9" onClick={showSidebar} />
             </Link>
-            <ul className="flex flex-row space-x-4">
-            </ul>
-            <img className="w-20 h-20" src={Logo} alt="logo" />
+            <>
+              <img className="w-20 h-20" src={Logo} alt="logo" />
+              {user && <div className="flex justify-between items-center text-base m-[1vh] gap-3">
+                <img
+                  className="w-10 h-10 rounded-full object-cover"
+                  src={user.image}
+                  alt="pfp"
+                />
+                <div className="text-left">
+                  <p className="font-semi text-[2vh] text-secondary-100">
+                    {user.name}
+                  </p>
+                </div>
+              </div>}
+            </>
           </div>
           <nav className={sidebar ? "nav-menu active col-span-3" : "nav-menu col-span-3"}>
             <ul className="nav-menu-items justify-between" onClick={showSidebar}>
-              <li className="navbar-toggle">
-                <Link to="#" className="ml-[1rem] menu-bars">
-                  <AiIcons.AiOutlineClose color="#bac1c9" />
+              <li className="navbar-toggle items-center justify-center px-[3vh]">
+                <img className="w-20 h-20" src={Logo} alt="logo" />
+                <Link to="#" className="ml-[1rem] menu-bars !border-none">
+                  <IoIosArrowForward color="white" />
                 </Link>
               </li>
               <ul>
@@ -46,18 +79,29 @@ const Layout = ({ user, userData, logout, cartTotalQuantity, compareQuantity }) 
                 })}
               </ul>
 
-              {/* TODO: IS USER ADMIN  */}
-
-              <AdminAccordion />
+              {
+                user?.role === "admin" && <AdminAccordion />
+              }
 
               {
-                !user && <li key={10} className="nav-text ">
-                  <NavLink to="/entry" >
+                !user ? <li key={10} className="nav-text ">
+                  <NavLink to="/auth/login" >
                     {" "}
                     <BiSolidLogInCircle color="white" />
                     <span>Login</span>
                   </NavLink>
                 </li>
+                  :
+                  <>
+
+                    <li key={10} className="nav-text">
+                      <button onClick={logout} >
+                        <BiSolidLogInCircle color="white" />
+                        <span>Logout</span>
+                      </button>
+                    </li>
+
+                  </>
               }
             </ul>
           </nav>

@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ErrorBlock } from '../../../components/ErrorBlock'
+import ErrorBlock from '../../../components/ErrorBlock'
 import './index.css';
 
 const SignupSchema = Yup.object().shape({
@@ -41,20 +41,22 @@ const Signup = () => {
     const formSubmitHandler = async (values, onSubmitProps) => {
         const id = toast.loading("Please wait...");
         try {
-            const formData = new FormData();
-            formData.append('name', values.name);
-            formData.append('email', values.email);
-            formData.append('password', values.password);
-            formData.append('image', values.image);
-            const data = await axios.post(`/auth/signup`, formData);
-            if (data) {
+            const data = {
+                name: values.name,
+                email: values.email,
+                password: values.password,
+                image: values.image
+            };
+
+            const response = await axios.post('/api/auth/signup', data);
+
+            if (response.data) {
                 toast.update(id, {
                     render: "Logged in successfully",
                     type: "success",
                     ...config,
                     isLoading: false,
                 });
-
             }
             dispatch(
                 authActions.login({
@@ -65,7 +67,7 @@ const Signup = () => {
             );
 
             setIsLoading(false);
-            navigate('/');
+            navigate('/books');
             onSubmitProps.onCancel();
         } catch (err) {
             setIsLoading(false);
@@ -86,7 +88,7 @@ const Signup = () => {
         const data = new FormData();
         data.append("photos", file[0]);
         axios
-            .post("/upload", data, {
+            .post("/upload/photos", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -130,23 +132,50 @@ const Signup = () => {
                     >
                         <div className="form-control">
 
-                            <h2>SignUp</h2>
+                            <h2 className='text-[4vh]'>SignUp</h2>
                             <div className="form-control-input">
                                 <label htmlFor="email">E-mail</label>
-                                <Field type="email" name="email" placeholder="example@example.com" />
-                                <ErrorMessage name="email" component="div" />
+                                <Field name="email">
+                                    {({ field, form }) => (
+                                        <input
+                                            {...field}
+                                            type="email"
+                                            placeholder="example@example.com"
+                                            className={form.errors.email && form.touched.email ? 'error' : ''}
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage className='error-message' name="email" component="div" />
                             </div>
 
                             <div className="form-control-input">
                                 <label htmlFor="password">Password</label>
-                                <Field type="password" name="password" placeholder="Make sure that your password is strong" />
-                                <ErrorMessage name="password" component="div" />
+                                <Field name="password">
+                                    {({ field, form }) => (
+                                        <input
+                                            {...field}
+                                            type="password"
+                                            placeholder="Make sure that your password is strong"
+                                            className={form.errors.password && form.touched.password ? 'error' : ''}
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage className='error-message' name="password" component="div" />
                             </div>
 
                             <div className="form-control-input">
                                 <label htmlFor="name">Name</label>
-                                <Field type="text" name="name" placeholder="Please enter your name" />
-                                <ErrorMessage name="name" component="div" />
+                                <Field name="name">
+                                    {({ field, form }) => (
+                                        <input
+                                            {...field}
+                                            type="text"
+                                            placeholder="Please enter your name"
+                                            className={form.errors.name && form.touched.name ? 'error' : ''}
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage className='error-message' name="name" component="div" />
                             </div>
 
                             <div className="form-control__collection">
@@ -203,30 +232,28 @@ const Signup = () => {
                                 </label>
                             </div>
                         </div>
-                        <button type="submit" disabled={isSubmitting || Object.keys(errors).length !== 0 || isLoading || isFormEmpty} className="center button login-button">
+                        <button type="submit" disabled={isSubmitting || Object.keys(errors).length !== 0 || isLoading || isFormEmpty} className="btn-3">
                             Signup
                         </button>
                         {errors.submit && <div className="error">{errors.submit}</div>}
                     </Form>
                 }}
-                <ToastContainer
-                    position="top-center"
-                    autoClose={2000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
             </Formik>
-            <Link to={"/auth/login"}>
-                <button className="sec-acc-btn">
-                    Already have an account? Sign in
-                </button>
-            </Link>
+            <div className="pt-[3vh]">
+                Already have an account? <Link className='text-secondary' to={"/auth/login"}>login</Link>
+            </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             {error && <ErrorBlock message={error} />}
         </div>
     );

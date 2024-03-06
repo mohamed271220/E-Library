@@ -23,6 +23,7 @@ router.post(
     body("email").isEmail().withMessage("Please enter a valid email"),
     body("password").trim().isLength({ min: 5 }),
     body("name").trim().not().isEmpty(),
+    body("name").trim().not().isEmpty(),
   ],
   authController.signup
 );

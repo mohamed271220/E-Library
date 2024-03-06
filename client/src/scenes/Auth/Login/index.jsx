@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { authActions } from '../shared/features/authSlice';
+import { authActions } from '../../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import LoadingSpinner from '../shared/Loading/LoadingSpinner/LoadingSpinner';
+import LoadingSpinner from '../../../constants/Loading/LoadingSpinner/LoadingSpinner';
 import { Link } from 'react-router-dom';
 import '../Signup/index.css';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ErrorBlock } from '../../../components/ErrorBlock'
+import ErrorBlock from '../../../components/ErrorBlock'
 
 const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -38,7 +38,7 @@ const Login = () => {
     const formSubmitHandler = async (values, onSubmitProps) => {
         const id = toast.loading("Please wait...");
         try {
-            const response = await axios.post(`/auth/login`, {
+            const response = await axios.post(`/api/auth/login`, {
                 email: values.email,
                 password: values.password,
             });
@@ -89,50 +89,68 @@ const Login = () => {
                     , handleBlur, setFieldValue }) => {
                     const isFormEmpty = Object.values(values).some((value) => value === '');
                     return <Form
-                        className="flex flex-col gap-[2vh] p-[4vh]"
+                        className="flex flex-col gap-[2vh]"
                         onSubmit={handleSubmit}
                     >
-                        {errors.submit && <p className="errmsg">{errors.submit}</p>}
+                        {errors.submit && <p className="error">{errors.submit}</p>}
 
                         <div className='form-control'>
-                            <h2>Login</h2>
+                            <h2 className='text-[4vh]'>Login:</h2>
                             <div className="form-control-input">
                                 <label htmlFor="email">E-mail</label>
-                                <Field type="email" name="email" placeholder="example@example.com" />
-                                <ErrorMessage name="email" component="div" />
+                                <Field name="email">
+                                    {({ field, form }) => (
+                                        <input
+                                            {...field}
+                                            type="email"
+                                            placeholder="example@example.com"
+                                            className={form.errors.email && form.touched.email ? 'error' : ''}
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage className='error-message' name="email" component="div" />
                             </div>
 
                             <div className="form-control-input">
                                 <label htmlFor="password">Password</label>
-                                <Field type="password" name="password" placeholder="Make sure that your password is strong" />
-                                <ErrorMessage name="password" component="div" />
+                                <Field name="password">
+                                    {({ field, form }) => (
+                                        <input
+                                            {...field}
+                                            type="password"
+                                            placeholder="Make sure that your password is strong"
+                                            className={form.errors.password && form.touched.password ? 'error' : ''}
+                                        />
+                                    )}
+                                </Field>
+                                <ErrorMessage className='error-message' name="password" component="div" />
                             </div>
                         </div>
-
-                        <button type="submit" disabled={isSubmitting || Object.keys(errors).length !== 0 || isLoading || isFormEmpty} className="center button login-button">
+                        <button type="submit" disabled={isSubmitting || Object.keys(errors).length !== 0 || isLoading || isFormEmpty} className="btn-3">
                             Login
                         </button>
                         {errors.submit && <div className="error">{errors.submit}</div>}
                     </Form>
                 }}
-                <ToastContainer
-                    position="top-center"
-                    autoClose={2000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
             </Formik>
-            <Link to={"/auth/signup"}>
-                <button className="sec-acc-btn">
-                    Don&apos;t have an account? Sign up
-                </button>
-            </Link>
+
+
+            <div className="pt-[3vh]">
+                Don&apos;t have an account? <Link className='text-secondary' to={"/auth/signup"}>Sign up</Link>
+            </div>
+
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             {error && <ErrorBlock message={error} />}
         </div>
     );

@@ -71,7 +71,7 @@
   height: 60px;
 }
 
-.nav-text a {
+.nav-text a , .nav-text button {
   text-decoration: none;
   color: white;
   width: 95%;

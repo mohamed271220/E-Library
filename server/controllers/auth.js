@@ -88,6 +88,8 @@ exports.signup = async (req, res, next) => {
     token: token,
     userId: createdUser.id,
     image: createdUser.image,
+    role: createdUser.role,
+    name: createdUser.name,
   });
 };
 
@@ -148,6 +150,8 @@ exports.login = async (req, res, next) => {
       token: accessToken,
       userId: existingUser.id,
       image: existingUser.image,
+      role: existingUser.role,
+      name: existingUser.name,
     });
   } catch (err) {
     const error = new Error("Login failed");
