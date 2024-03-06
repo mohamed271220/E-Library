@@ -18,16 +18,37 @@ const userSchema = new Schema(
             enum: ["user", "admin"],
             default: "user",
         },
-        readingHistory: [
+        savedBooks: [
             {
-                bookId: {
-                    type: mongoose.Types.ObjectId,
-                    ref: "Book",
-                },
-                editionNumber: Number,
-                startedReading: Date,
+                type: Schema.Types.ObjectId,
+                ref: "Book",
             },
         ],
+        savedJournals: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Journal",
+            },
+        ],
+        savedTheses: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Thesis",
+            },
+        ],
+        savedEncyclopedias: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Encyclopedia",
+            },
+        ],
+        savedResearches: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Research",
+            },
+        ],
+        
 
     },
     {

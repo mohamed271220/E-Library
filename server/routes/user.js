@@ -11,6 +11,5 @@ const isUser = require('../middlewares/is-auth');
 
 router.get('/profile', isUser, userController.getProfile);
 router.post('/profile', isUser, userController.postProfile);
-router.get('/read/:bookId', isUser, userController.readBook);
 
 module.exports = router;

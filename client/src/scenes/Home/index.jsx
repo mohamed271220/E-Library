@@ -82,20 +82,18 @@ const Home = ({ user }) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center
-  w-full z-10
-  "
-    >
-      <div className="w-full p-5 rounded-lg flex flex-row justify-between items-center gap-[2vh] " >
-        <form onSubmit={handleSearchSubmit} id="search-form" className="relative w-full">
+      className="flex flex-col items-center justify-center w-full z-10">
+      <div className="w-full p-5 rounded-lg flex md:flex-row flex-col justify-between items-center gap-[2vh] " >
+        <h1 className="text-[5vh]">All Books:</h1>
+        <form onSubmit={handleSearchSubmit} id="search-form" className="relative w-full md:w-[50%]">
           <input
-            type="search"
-            placeholder="Search posts"
             className="w-full border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+            type="search"
+            placeholder="Search for books...(by title or author)"
             ref={searchElement}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="btn-3 !px-2 !py-1 !text-sm absolute top-0 right-0 h-10 rounded-lg"><AiOutlineSearch /></button>
+          <button className="btn-3 !px-2 !py-1 !text-sm absolute top-0 right-0 h-10 rounded-none rounded-r-lg bg-dim-blue"><AiOutlineSearch color="white" /></button>
         </form>
       </div>
       {isPending && !isError ? <LoadingSkeleton type='feed' />

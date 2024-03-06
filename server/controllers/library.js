@@ -1,5 +1,5 @@
 const Book = require("../models/book");
-const Department = require("../models/department");
+const Category = require("../models/Category");
 const Encyclopedia = require("../models/encyclopedia");
 const Journal = require("../models/journal");
 const Research = require("../models/research");
@@ -57,10 +57,10 @@ exports.getBooks = async (req, res) => {
         next(error);
     }
 }
-exports.getDepartments = async (req, res, next) => {
+exports.getCategories = async (req, res, next) => {
     try {
-        const departments = await Department.find();
-        res.status(200).json({ departments });
+        const categories = await Category.find();
+        res.status(200).json({ categories });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -68,11 +68,11 @@ exports.getDepartments = async (req, res, next) => {
         next(error);
     }
 }
-exports.getDepartment = async (req, res, next) => {
+exports.getCategory = async (req, res, next) => {
     try {
-        const { departmentId } = req.params;
-        const department = await Department.findById(departmentId);
-        res.status(200).json({ department });
+        const { categoryId } = req.params;
+        const category = await Category.findById(categoryId);
+        res.status(200).json({ category });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -80,9 +80,6 @@ exports.getDepartment = async (req, res, next) => {
         next(error);
     }
 }
-
-
-
 exports.getEncyclopedias = async (req, res, next) => {
     try {
         const { page = 1, limit = 10 } = req.query;

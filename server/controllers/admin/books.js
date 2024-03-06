@@ -1,5 +1,5 @@
 const Book = require('../../models/book');
-const Department = require('../../models/department');
+const Department = require('../../models/Category');
 
 const { validationResult } = require('express-validator');
 
