@@ -5,11 +5,9 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import Banner from "../../components/Banner";
 import { useSelector } from "react-redux";
 
-const blogPostSchema = Yup.object().shape({
+const bookSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   author: Yup.string().required("Author is required"),
   description: Yup.string().required("Description is required"),
@@ -46,7 +44,7 @@ const bookForm = () => {
     const data = new FormData();
     data.append("photos", file[0]);
     axios
-      .post("/upload", data, {
+      .post("/upload/pdfs", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -106,10 +104,9 @@ const bookForm = () => {
   };
   return (
     <div>
-      <Banner title={'Add Post'} path={["Home", "Admin", "Add Post"]} />
       <Formik
         initialValues={initialValues}
-        validationSchema={blogPostSchema}
+        validationSchema={bookSchema}
         onSubmit={formSubmitHandler}
       >
         {({ values, errors, touched, handleSubmit, isSubmitting

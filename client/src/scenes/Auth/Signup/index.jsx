@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -37,6 +37,12 @@ const Signup = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const setFieldValueRef = useRef();
+    const token = useSelector((state) => state.auth.token);
+
+    useEffect(() => {
+        if (token)
+            navigate('/')
+    }, [])
 
     const formSubmitHandler = async (values, onSubmitProps) => {
         const id = toast.loading("Please wait...");
@@ -50,7 +56,7 @@ const Signup = () => {
 
             const response = await axios.post('/api/auth/signup', data);
 
-            if (response.data) {
+            if (response) {
                 toast.update(id, {
                     render: "Logged in successfully",
                     type: "success",
@@ -60,18 +66,18 @@ const Signup = () => {
             }
             dispatch(
                 authActions.login({
-                    userId: data.data.userId,
-                    token: data.data.token,
-                    data: data.data,
+                    userId: response.data.userId,
+                    token: response.data.token,
+                    data: response.data,
                 })
             );
 
             setIsLoading(false);
-            navigate('/books');
+            navigate('/');
             onSubmitProps.onCancel();
         } catch (err) {
             setIsLoading(false);
-            setError(err || 'Something went wrong' || err?.response?.data.message);
+            setError(err?.response?.data.message);
             toast.update(id, {
                 render: "Failed to login.",
                 type: "error",

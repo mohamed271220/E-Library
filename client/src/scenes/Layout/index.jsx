@@ -43,19 +43,20 @@ const Layout = () => {
               <FaIcons.FaBars color="#bac1c9" onClick={showSidebar} />
             </Link>
             <>
-              <img className="w-20 h-20" src={Logo} alt="logo" />
-              {user && <div className="flex justify-between items-center text-base m-[1vh] gap-3">
-                <img
-                  className="w-10 h-10 rounded-full object-cover"
-                  src={user.image}
-                  alt="pfp"
-                />
+              {user ? <div className="flex justify-between items-center text-base m-[1vh] gap-3">
                 <div className="text-left">
                   <p className="font-semi text-[2vh] text-secondary-100">
                     {user.name}
                   </p>
                 </div>
-              </div>}
+                <img
+                  className="w-10 h-10 rounded-full object-cover"
+                  src={user.image}
+                  alt="pfp"
+                />
+              </div> : <NavLink className='btn-3 flex items-center bg-white text-dim-blue' to="/auth/login" >
+                <span className="m-0">Login</span>
+              </NavLink>}
             </>
           </div>
           <nav className={sidebar ? "nav-menu active col-span-3" : "nav-menu col-span-3"}>
@@ -85,11 +86,7 @@ const Layout = () => {
 
               {
                 !user ? <li key={10} className="nav-text ">
-                  <NavLink to="/auth/login" >
-                    {" "}
-                    <BiSolidLogInCircle color="white" />
-                    <span>Login</span>
-                  </NavLink>
+
                 </li>
                   :
                   <>

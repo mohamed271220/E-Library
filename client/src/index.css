@@ -88,9 +88,9 @@
 }
 
 .error-block-icon {
-  font-size: 2rem;
-  width: 3rem;
-  height: 3rem;
+  font-size: 3vh;
+  width: 5vh;
+  height: 5vh;
   color: #fff;
   background-color: #890b35;
   border-radius: 50%;

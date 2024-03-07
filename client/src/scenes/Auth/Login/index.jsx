@@ -64,7 +64,8 @@ const Login = () => {
             onSubmitProps.onCancel();
         } catch (err) {
             setIsLoading(false);
-            setError(err || 'Something went wrong' || err?.response?.data.message);
+            console.log(err);
+            setError(err?.response?.data.message);
             toast.update(id, {
                 render: "Failed to login.",
                 type: "error",
