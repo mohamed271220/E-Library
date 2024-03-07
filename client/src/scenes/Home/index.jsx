@@ -83,7 +83,7 @@ const Home = ({ user }) => {
   return (
     <div
       className="flex flex-col items-center justify-center w-full z-10">
-      <div className="w-full p-5 rounded-lg flex md:flex-row flex-col justify-between items-center gap-[2vh] " >
+      <div className="w-full px-5 pt-5 rounded-lg flex md:flex-row flex-col justify-between items-center gap-[2vh] " >
         <h1 className="text-[5vh]">All Books:</h1>
         <form onSubmit={handleSearchSubmit} id="search-form" className="relative w-full md:w-[50%]">
           <input

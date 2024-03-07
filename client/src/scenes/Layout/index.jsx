@@ -15,6 +15,7 @@ import { IoIosArrowForward } from "react-icons/io";
 
 const Layout = () => {
   const [sidebar, setSidebar] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
@@ -29,6 +30,20 @@ const Layout = () => {
       }
     }
   }, [dispatch, navigate, token]);
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll);
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
 
   const logout = () => {
     dispatch(authActions.logout());
@@ -38,14 +53,14 @@ const Layout = () => {
     <div className='relative flex flex-col '>
       <div className="grid grid-cols-12 justify-center">
         <IconContext.Provider value={{ color: "#000" }}>
-          <div className="navbar col-span-12 sticky">
+          <div className={`navbar drop-shadow-lg transition-all w-full col-span-12 fixed ${scrolled && !sidebar ? 'bg-dim-blue' : 'bg-white'}`}>
             <Link to="#" className="menu-bars">
               <FaIcons.FaBars color="#bac1c9" onClick={showSidebar} />
             </Link>
             <>
               {user ? <div className="flex justify-between items-center text-base m-[1vh] gap-3">
                 <div className="text-left">
-                  <p className="font-semi text-[2vh] text-secondary-100">
+                  <p className={`font-semi text-[2vh] ${scrolled && !sidebar ? 'text-[#bac1c9]' : ''} `}>
                     {user.name}
                   </p>
                 </div>
@@ -60,18 +75,18 @@ const Layout = () => {
             </>
           </div>
           <nav className={sidebar ? "nav-menu active col-span-3" : "nav-menu col-span-3"}>
-            <ul className="nav-menu-items justify-between" onClick={showSidebar}>
-              <li className="navbar-toggle items-center justify-center px-[3vh]">
+            <ul className="nav-menu-items" onClick={showSidebar}>
+              <li className="navbar-toggle items-center justify-between px-[3vh]">
                 <img className="w-20 h-20" src={Logo} alt="logo" />
-                <Link to="#" className="ml-[1rem] menu-bars !border-none">
-                  <IoIosArrowForward color="white" />
+                <Link to="#" className="ml-[1rem] menu-bars !border-none transform transition-transform duration-500 hover:rotate-180 hover:bg-slate-200 hover:bg-opacity-20 rounded-full">
+                  <IoIosArrowForward color="#e2e8f0" />
                 </Link>
               </li>
               <ul>
                 {SidebarData.map((item, index) => {
                   return (
                     <li key={index} className={item.cName}>
-                      <NavLink activeClassName="active" to={item.path}>
+                      <NavLink to={item.path}>
                         <span><item.icon color="white" /></span>
                         <span>{item.title}</span>
                       </NavLink>
@@ -102,7 +117,7 @@ const Layout = () => {
               }
             </ul>
           </nav>
-          <div className={`${sidebar ? "content  col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"} bg-gray-100 bg-opacity-30 w-full h-full`}>
+          <div className={`${sidebar ? "content  col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"} bg-gray-100 bg-opacity-30 mt-[90px] w-full h-full`}>
             <ScrollToTop />
             <Outlet />
           </div>

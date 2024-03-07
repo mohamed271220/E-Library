@@ -23,14 +23,20 @@ function AdminAccordion({ onClick }) {
         closed: { opacity: 1, height: "auto", rotate: 0 }
     };
 
+    const navItems = [
+        { path: "/admin/addBook", label: "Add Book" },
+        { path: "/admin/addPost", label: "Add Post" },
+        { path: "/admin/addEncyclopedia", label: "Add Encyclopedia" },
+        { path: "/admin/addJournal", label: "Add Journal" },
+        { path: "/admin/addSearch", label: "Add Search" },
+    ];
+
     return (
-        <div className={`${isOpen ? "bg-[#0066ff2c] m-2 rounded":""}`}>
+        <div className={`${isOpen ? "bg-[#0066ff2c] m-2 rounded" : ""}`}>
             <AnimatePresence>
-                <li key={24}  onClick={toggleAccordion} className="nav-text">
+                <li key={24} onClick={toggleAccordion} className="nav-text">
                     <Link className="border-b flex justify-between items-center">
-                        <span>
-                            Admin
-                        </span>
+                        <span>Admin</span>
                         <motion.div
                             animate={isOpen ? "open" : "closed"}
                             variants={variants2}
@@ -49,21 +55,13 @@ function AdminAccordion({ onClick }) {
                         transition={{ duration: 0.5, ease: "easeInOut", originY: 0 }}
                         className="overflow-hidden transform origin-top "
                     >
-                        <li key={4} className="nav-text ">
-                            <NavLink to="/addProduct">
-                                <span className="">Add product</span>
-                            </NavLink>
-                        </li>
-                        <li key={43} className="nav-text">
-                            <NavLink to="/addPost">
-                                <span className="">Add post</span>
-                            </NavLink>
-                        </li>
-                        <li key={422} className="nav-text">
-                            <NavLink to="/dashboard">
-                                <span className="">Admin dashboard</span>
-                            </NavLink>
-                        </li>
+                        {navItems.map((item, index) => (
+                            <li key={index} className="nav-text">
+                                <NavLink to={item.path}>
+                                    <span className="">{item.label}</span>
+                                </NavLink>
+                            </li>
+                        ))}
                     </motion.div>
                 )}
             </AnimatePresence>

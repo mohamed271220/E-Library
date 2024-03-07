@@ -22,7 +22,7 @@ const initialValues = {
 };
 
 
-const bookForm = () => {
+const BookForm = () => {
   const [addedPhotos, setAddedPhotos] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -215,4 +215,4 @@ const bookForm = () => {
     </div>
   );
 };
-export default bookForm;
+export default BookForm;
