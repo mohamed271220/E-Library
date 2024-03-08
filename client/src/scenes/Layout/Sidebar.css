@@ -15,7 +15,6 @@
   grid-column: span 3;
 }
 
-
 @media (max-width: 768px) {
   .grid-cols-sidebar {
     grid-template-columns: [start] 0px [sidebar-end] auto [end];
@@ -25,7 +24,7 @@
   background-color: #ffffff;
   height: 80px;
   display: flex;
-  
+
   justify-content: space-between;
   align-items: center;
   padding: 0 20px 0 20px;
@@ -57,7 +56,7 @@
   overflow-x: hidden;
 }
 
-.nav-menu.active {
+.nav-menu.active-menu {
   left: 0;
   transition: 350ms;
 }
@@ -72,7 +71,8 @@
   height: 60px;
 }
 
-.nav-text a , .nav-text button {
+.nav-text a,
+.nav-text button {
   text-decoration: none;
   color: white;
   width: 95%;
@@ -84,11 +84,14 @@
   transition: all 0.3s ease;
 }
 
-.nav-text a:hover {
+.nav-text a:hover,
+.nav-text a:active,
+.active {
   background-color: #0066ff1e;
   color: rgb(214, 214, 214);
 }
-.active {
+
+.active-menu {
   background-color: #06005c;
   color: rgb(214, 214, 214);
 }

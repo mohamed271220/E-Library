@@ -21,12 +21,12 @@ exports.getBook = async (req, res) => {
 
 
 exports.getBooks = async (req, res) => {
-    const { page = 1, limit = 10, department, search } = req.query;
+    const { page = 1, limit = 10, category, search } = req.query;
     try {
         let filter = {};
 
-        if (department) {
-            filter.department = department;
+        if (category) {
+            filter.category = category;
         }
 
         if (search) {

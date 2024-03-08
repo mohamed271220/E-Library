@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
 
-export async function getBooks({ signal, page, limit, search }) {
+export async function getBooks({ signal, page, limit, search, category }) {
     const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/books`;
     const params = new URLSearchParams();
     if (page) {
@@ -13,6 +13,9 @@ export async function getBooks({ signal, page, limit, search }) {
     }
     if (search) {
         params.append('search', search);
+    }
+    if (category) {
+        params.append('category', category);
     }
     const url = `${baseUrl}?${params.toString()}`;
     const response = await fetch(url, { signal });

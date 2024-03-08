@@ -4,7 +4,7 @@ const router = express.Router();
 router.use('/users', require('./admin/users'));
 router.use('/books', require('./admin/books'));
 router.use('/posts', require('./admin/posts'));
-router.use('/departments', require('./admin/departments'));
+router.use('/categories', require('./admin/categories'));
 router.use('/encyclopedias', require('./admin/encyclopedias'));
 router.use('/journals',require('./admin/journals'));
 router.use('/researches',require('./admin/researches'));

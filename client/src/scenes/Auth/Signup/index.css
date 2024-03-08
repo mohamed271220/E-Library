@@ -131,13 +131,15 @@
   padding-bottom: 2vh;
 }
 .form-control-input input:focus,
-.form-control-input textarea:focus {
+.form-control-input textarea:focus,
+.form-control-input select:focus {
   outline: none;
   background: #F8FEFF;
   border-bottom: #06005c 3px solid;
 }
 .form-control-input input,
-.form-control-input textarea {
+.form-control-input textarea,
+.form-control-input select {
   background-color: #F8FEFF;
   color: #5E8396 !important;
   border: #5E8396 1px solid;

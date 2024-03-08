@@ -1,6 +1,6 @@
 const Book = require('../../models/book');
-const Department = require('../../models/Category');
-
+const Category = require('../../models/Category');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 
 exports.addBook = async (req, res, next) => {
@@ -11,31 +11,22 @@ exports.addBook = async (req, res, next) => {
         error.data = errors.array();
         throw error;
     }
-    const { title, author, description, image, department, edition } = req.body;
+    const { title, author, description, image, category } = req.body;
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
-        const department = await Department.findById(department);
-        if (!department) {
-            const error = new Error("Department not found");
-            error.statusCode = 404;
-            throw error;
-        }
-        department.books.push(book);
-        await department.save(sess);
         const book = new Book({
             title,
             author,
             description,
             image,
-            department,
-            edition: {
-                editionNumber: edition.editionNumber,
-                publicationDate: edition.publicationDate,
-                changes: edition.changes,
-                pdfLink: edition.pdfLink
-            }
+            category
         });
+        if (category) {
+            const categoryDb = await Category.findById(category);
+            categoryDb.books.push(book);
+            await categoryDb.save(sess);
+        }
         await book.save(sess);
         await sess.commitTransaction();
         sess.endSession();
@@ -80,9 +71,9 @@ exports.deleteBook = async (req, res, next) => {
         if (!book) {
             throw new Error('Book not found');
         }
-        const department = await Department.findById(book.department);
-        department.books.pull(book);
-        await department.save(sess);
+        const category = await Category.findById(book.category);
+        category.books.pull(book);
+        await category.save(sess);
         await book.remove(sess);
         await sess.commitTransaction();
         sess.endSession();

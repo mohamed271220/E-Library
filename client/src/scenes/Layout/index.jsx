@@ -74,7 +74,7 @@ const Layout = () => {
               </NavLink>}
             </>
           </div>
-          <nav className={sidebar ? "nav-menu active col-span-3" : "nav-menu col-span-3"}>
+          <nav className={sidebar ? "nav-menu active-menu col-span-3" : "nav-menu col-span-3"}>
             <ul className="nav-menu-items" onClick={showSidebar}>
               <li className="navbar-toggle items-center justify-between px-[3vh]">
                 <img className="w-20 h-20" src={Logo} alt="logo" />
@@ -86,7 +86,7 @@ const Layout = () => {
                 {SidebarData.map((item, index) => {
                   return (
                     <li key={index} className={item.cName}>
-                      <NavLink to={item.path}>
+                      <NavLink activeClassName="active" to={item.path}>
                         <span><item.icon color="white" /></span>
                         <span>{item.title}</span>
                       </NavLink>

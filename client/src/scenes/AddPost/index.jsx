@@ -53,7 +53,7 @@ const BlogPostForm = () => {
     const data = new FormData();
     data.append("photos", file[0]);
     axios
-      .post("/upload", data, {
+      .post("/upload/photos", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

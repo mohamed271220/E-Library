@@ -6,7 +6,6 @@ import { FiChevronDown } from 'react-icons/fi';
 
 function AdminAccordion({ onClick }) {
     const [isOpen, setIsOpen] = useState(false);
-
     const toggleAccordion = (event) => {
         event.stopPropagation();
         setIsOpen(!isOpen);
@@ -25,6 +24,7 @@ function AdminAccordion({ onClick }) {
 
     const navItems = [
         { path: "/admin/addBook", label: "Add Book" },
+        { path: "/admin/addCategories", label: "Add Category" },
         { path: "/admin/addPost", label: "Add Post" },
         { path: "/admin/addEncyclopedia", label: "Add Encyclopedia" },
         { path: "/admin/addJournal", label: "Add Journal" },

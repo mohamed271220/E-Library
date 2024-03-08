@@ -6,10 +6,10 @@ const bookSchema = new Schema({
     author: { type: String, required: true, min: 2, max: 50 },
     description: { type: String, required: true, min: 2, max: 500 },
     image: { type: String, required: true, min: 2, max: 500 },
-    // category: {
-    //     type: mongoose.Types.ObjectId,
-    //     ref: "Category",
-    // },
+    category: {
+        type: mongoose.Types.ObjectId,
+        ref: "Category",
+    },
     editions: [{
         editionNumber: { type: Number, required: true },
         publicationDate: { type: Date, required: true },

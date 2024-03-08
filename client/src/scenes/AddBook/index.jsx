@@ -6,19 +6,23 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../../constants/Http";
 
 const bookSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   author: Yup.string().required("Author is required"),
   description: Yup.string().required("Description is required"),
   image: Yup.string(),
+  category: Yup.string(),
 });
 
 const initialValues = {
   title: "",
   author: "",
   image: "",
-  description: ""
+  description: "",
+  category: ""
 };
 
 
@@ -27,6 +31,11 @@ const BookForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const setFieldValueRef = useRef();
+  const { data, isPending, isError, error, refetch } = useQuery({
+    queryKey: ["categories"],
+    queryFn: ({ signal }) => getCategories({ signal }),
+  });
+
   const token = useSelector((state) => state.auth.token);
   const config = {
     position: "top-center",
@@ -44,7 +53,7 @@ const BookForm = () => {
     const data = new FormData();
     data.append("photos", file[0]);
     axios
-      .post("/upload/pdfs", data, {
+      .post("/upload/photos", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -58,6 +67,7 @@ const BookForm = () => {
       .catch((error) => {
         setIsLoading(false);
       });
+    setIsLoading(false);
   }
   function removePhoto() {
     setIsLoading(true);
@@ -67,15 +77,16 @@ const BookForm = () => {
 
   const formSubmitHandler = async (values, onSubmitProps) => {
     const id = toast.loading("Please wait...");
+    setIsLoading(true);
     try {
       const postData = {
         title: values.title,
         author: values.author,
         image: values.image,
-        description: values.description
+        description: values.description,
+        category: values.category === "" ? null : values.category,
       };
-      setIsLoading(true);
-      const response = await axios.post("/api/admin/posts", postData, {
+      const response = await axios.post("/api/admin/books", postData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'
@@ -83,24 +94,24 @@ const BookForm = () => {
       });
       if (response) {
         toast.update(id, {
-          render: "Product added successfully",
+          render: "Book added successfully",
           type: "success",
           ...config,
           isLoading: false,
         });
       }
-      setIsLoading(false);
       navigate("/");
       onSubmitProps.resetForm();
     } catch (error) {
       setIsLoading(false);
       toast.update(id, {
-        render: "Failed to add post.",
+        render: "Failed to add book.",
         type: "error",
         isLoading: false,
         ...config,
       });
     }
+    setIsLoading(false);
   };
   return (
     <div>
@@ -112,36 +123,52 @@ const BookForm = () => {
         {({ values, errors, touched, handleSubmit, isSubmitting
           , handleBlur, setFieldValue,
           handleChange }) => {
-          // Store a reference to the setFieldValue function
-          const isFormEmpty = Object.values(values).some((value) => value === '');
+          const isFormFilled = Object.entries(values).some(([key, value]) => {
+            // If the key is 'category' and value is not an empty string, return true
+            if (key === 'category' && value !== '') {
+              return true;
+            }
+            // For all other keys, return true if the value is an empty string
+            return key !== 'category' && value === '';
+          });
           setFieldValueRef.current = setFieldValue;
           return <Form
             onSubmit={handleSubmit}
-            encType="multipart/form-data"
-            method="POST"
             className="flex flex-col gap-[2vh] p-[4vh]"
           >
+            <h1 className="text-[4.5vh]">Add a new book:</h1>
             <div className="form-control">
               <div className="form-control-input">
                 <label htmlFor="title">Title</label>
-                <Field type="text" name="title" placeholder="Write an attractive title." />
+                <Field type="text" name="title" placeholder="Write the book's title." />
                 <ErrorMessage name="title" component="div"
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
                 <label htmlFor="author">Author</label>
-                <Field type="text" name="author" placeholder="What is the name you want to appear with?" />
+                <Field type="text" name="author" placeholder="Write the name of the writer." />
                 <ErrorMessage name="author" component="div"
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
                 <label htmlFor="description">Description</label>
-                <Field type="text" name="description" placeholder="Put a relevant description." />
+                <Field as="textarea" type="text" name="description" placeholder="Put a relevant description." />
                 <ErrorMessage name="description" component="div"
                   className="invalid-feedback" />
               </div>
+              <div className="form-control-input">
+                <label htmlFor="category">Category</label>
+                <Field as="select" name="category">
+                  {data?.categories?.map((category, index) => (
+                    <option key={index} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                  <option value="">Others</option>
+                </Field>
+              </div>
               <div className="form-control__collection">
-                <label htmlFor="file" className="label-upload">Upload Article&rsquo;s main image</label>
+                <label htmlFor="file" className="label-upload">Upload books&rsquo;s main image</label>
                 {addedPhotos &&
                   <>
                     <div className="form-control__uploader">
@@ -193,8 +220,7 @@ const BookForm = () => {
                 </label>
               </div>
             </div>
-            <button type="submit" disabled={isFormEmpty || !addedPhotos || isSubmitting || Object.keys(errors).length !== 0 || isLoading}
-              className="btn-3 bg-[#fdd49e]" >
+            <button disabled={!isFormFilled || isSubmitting || Object.keys(errors).length !== 0 || isLoading} className="btn-3" type="submit">
               Submit
             </button>
           </Form>
