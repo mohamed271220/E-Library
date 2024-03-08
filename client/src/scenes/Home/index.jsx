@@ -6,11 +6,12 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { getBooks, getCategories } from "../../constants/Http";
 import Pagination from "../../components/Pagination";
 import ErrorBlock from "../../components/ErrorBlock";
+import { usePagination } from "../../hooks/usePagination";
 const Home = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const { data: books, isPending, isError, error, refetch } = useQuery({
     queryKey: ["books", searchSnap, currentPage],
@@ -26,7 +27,7 @@ const Home = ({ user }) => {
     const searchTerm = searchElement.current.value;
     setSearch(searchTerm);
     setSearchSnap(searchTerm);
-    setCurrentPage(1);
+    goToPage(1);
     refetch();
   }
 
@@ -74,7 +75,7 @@ const Home = ({ user }) => {
       }
       <Pagination
         currentPage={currentPage}
-        changePage={setCurrentPage}
+        changePage={goToPage}
         totalPages={books?.totalPages}
       />
     </div>

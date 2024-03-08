@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { authActions } from "./store/authSlice";
 import AddBook from "./scenes/AddBook";
 import AddCategory from "./scenes/AddCategory";
+import AddPost from "./scenes/AddPost";
+import News from "./scenes/News";
 
 axios.defaults.baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -68,10 +70,14 @@ const App = () => {
         <Route exact path="/" element={<Navigate to="/books" />} />
         <Route path="/books" element={<Home />} />
         <Route path="/books/:id" />
+        <Route path="/news" element={<News />} />
+        {/* Admin routes  */}
         <Route path="/admin/addBook" element={user?.role === "admin" ?
           <AddBook /> : <Navigate to="/books" />} />
         <Route path="/admin/addCategories" element={user?.role === "admin" ?
           <AddCategory /> : <Navigate to="/books" />} />
+        <Route path="/admin/addPost" element={user?.role === "admin" ?
+          <AddPost /> : <Navigate to="/books" />} />
       </Route>
       <Route
         element={<EntryLayout />}

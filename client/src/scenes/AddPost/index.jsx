@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Banner from "../../components/Banner";
 import { useSelector } from "react-redux";
 
 const blogPostSchema = Yup.object().shape({
@@ -114,7 +113,6 @@ const BlogPostForm = () => {
   };
   return (
     <div>
-      <Banner title={'Add Post'} path={["Home", "Admin", "Add Post"]} />
       <Formik
         initialValues={initialValues}
         validationSchema={blogPostSchema}

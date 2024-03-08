@@ -2,19 +2,23 @@ const User = require("../models/user");
 const Post = require("../models/post")
 
 exports.getPosts = async (req, res, next) => {
-    const { tag, search, limit } = req.query;
+    const { search, limit = 10, page = 1 } = req.query;
     try {
         let query = {};
-        if (tag) {
-            query.tag = tag;
-        }
         if (search) {
             query.title = { $regex: search, $options: "i" };
         }
         let posts = await Post.find(query)
             .sort({ createdAt: -1 })
-            .limit(limit ? parseInt(limit) : undefined);
-        res.status(200).json({ posts });
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let count = await Post.countDocuments(query);
+        res.status(200).json({
+            posts,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
