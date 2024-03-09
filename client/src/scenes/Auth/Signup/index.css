@@ -130,22 +130,24 @@
   margin: 2vh 0;
   padding-bottom: 2vh;
 }
+.form-control-input input,
+.form-control-input textarea,
+.form-control-input select {
+  background-color: #f8feff;
+  color: #5e8396 !important;
+  border: #5e8396 1px solid;
+  padding: 2vh;
+  border-radius: 6px;
+  font-size: 2vh;
+  transition: border-bottom 0.15s ease-in-out;
+  position: relative;
+}
 .form-control-input input:focus,
 .form-control-input textarea:focus,
 .form-control-input select:focus {
   outline: none;
-  background: #F8FEFF;
+  background: #f8feff;
   border-bottom: #06005c 3px solid;
-}
-.form-control-input input,
-.form-control-input textarea,
-.form-control-input select {
-  background-color: #F8FEFF;
-  color: #5E8396 !important;
-  border: #5E8396 1px solid;
-  padding: 2vh;
-  border-radius: 6px;
-  font-size: 2vh;
 }
 
 .form-control-input label,

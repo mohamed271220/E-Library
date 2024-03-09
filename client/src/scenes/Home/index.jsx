@@ -68,10 +68,13 @@ const Home = ({ user }) => {
       </div>
       {isPending && !isError ? <LoadingSkeleton type='feed' />
         :
-        <Items type={"books"} isError={false} error={error} items={books.books} user={user} />
+        <Items type={"books"} isError={false} error={error} items={books?.books} user={user} />
       }
       {
         isError && !isPending && <ErrorBlock title='Something went wrong' message={'err'} />
+      }
+      {
+        !isError && !isPending && !books?.books?.length && <h1 className="text-[4vh] font-normal mx-auto">No books found</h1>
       }
       <Pagination
         currentPage={currentPage}

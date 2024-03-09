@@ -117,7 +117,7 @@ const Layout = () => {
               }
             </ul>
           </nav>
-          <div className={`${sidebar ? "content  col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"} bg-gray-100 bg-opacity-30 mt-[90px] w-full h-full`}>
+          <div className={`${sidebar ? "content col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"} bg-gray-100 rounded-lg shadow-lg  bg-opacity-30 mt-[90px] w-full h-full`}>
             <ScrollToTop />
             <Outlet />
           </div>
