@@ -4,7 +4,6 @@ const libraryController = require("../controllers/library");
 router.get("/books", libraryController.getBooks);
 router.get("/books/:bookId", libraryController.getBook);
 
-
 router.get("/categories", libraryController.getCategories);
 router.get("/categories/:categoryId", libraryController.getCategory);
 

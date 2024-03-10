@@ -18,7 +18,7 @@ const Item = ({ item, user, type }) => {
                 <div className="py-3 flex flex-col px-2 gap-2">
                     <h3 className=" text-[2vh] font-semibold">{item.title}</h3>
                     <p className="text-gray-700  text-[1.8vh]">
-                        {item.author}
+                        {type === "journals" || type === "encyclopedias" ? item.publisher : item.author}
                     </p>
 
                 </div>

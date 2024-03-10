@@ -130,6 +130,7 @@ const BlogPostForm = () => {
             method="POST"
             className="flex flex-col gap-[2vh] p-[4vh]"
           >
+            <h1 className="text-[4.5vh]">Add a new blog post:</h1>
             <div className="form-control">
               <div className="form-control-input">
                 <label htmlFor="title">Title</label>

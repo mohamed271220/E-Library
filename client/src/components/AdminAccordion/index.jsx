@@ -28,7 +28,8 @@ function AdminAccordion({ onClick }) {
         { path: "/admin/addPost", label: "Add Post" },
         { path: "/admin/addEncyclopedia", label: "Add Encyclopedia" },
         { path: "/admin/addJournal", label: "Add Journal" },
-        { path: "/admin/addSearch", label: "Add Search" },
+        { path: "/admin/addResearch", label: "Add Research" },
+        { path: "/admin/addThesis", label: "Add Thesis" },
     ];
 
     return (

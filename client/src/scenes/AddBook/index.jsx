@@ -168,7 +168,7 @@ const BookForm = () => {
                 </Field>
               </div>
               <div className="form-control__collection">
-                <label htmlFor="file" className="label-upload">Upload books&rsquo;s main image</label>
+                <label htmlFor="file" className="label-upload">Upload book&rsquo;s main image</label>
                 {addedPhotos &&
                   <>
                     <div className="form-control__uploader">

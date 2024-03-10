@@ -70,7 +70,7 @@ const News = () => {
   return (
     <div>
       <div className="flex flex-col-reverse gap-[2vh] items-start  w-full
-       p-5 rounded-lg shadow-lg 
+       p-5
        md:flex-row  
        px-[4vh] md:px-[121px]
       ">
