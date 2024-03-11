@@ -89,6 +89,7 @@ const ResearchForm = () => {
     setIsLoading(false);
   }
   function uploadPdf(ev) {
+    const id = toast.loading("Please wait...");
     setIsLoading(true);
     const file = ev.target.files;
     const data = new FormData();
@@ -96,17 +97,33 @@ const ResearchForm = () => {
     axios
       .post("/upload/pdfs", data, {
         headers: {
+          Authorization: "Bearer " + token,
           "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
         const { data: filename } = response;
-        setFieldValueRef.current('pdf', filename[0]);
+
+        setFieldValueRef.current('pdfLink', filename[0]);
         setAddedPdfs(filename[0])
+        if (response) {
+          toast.update(id, {
+            render: "Book added successfully",
+            type: "success",
+            ...config,
+            isLoading: false,
+          });
+        }
         setIsLoading(false);
       })
       .catch(() => {
         setIsLoading(false);
+        toast.update(id, {
+          render: "Failed to add book.",
+          type: "error",
+          isLoading: false,
+          ...config,
+        });
       });
   }
   function removePdf() {
@@ -132,7 +149,7 @@ const ResearchForm = () => {
         doi: values.doi,
         keywords: values.keywords,
       };
-      const response = await axios.post("/api/admin/research", researchData, {
+      const response = await axios.post("/api/admin/researches", researchData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'
@@ -149,15 +166,15 @@ const ResearchForm = () => {
       navigate("/");
       onSubmitProps.resetForm();
     } catch (error) {
-      setIsLoading(false);
       toast.update(id, {
-        render: "Failed to add book.",
+        render: `Error: ${error.message}`,
         type: "error",
-        isLoading: false,
         ...config,
+        isLoading: false,
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   return (
     <div>

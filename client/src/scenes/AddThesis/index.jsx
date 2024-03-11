@@ -25,9 +25,10 @@ const researchSchema = Yup.object().shape({
     .required('Required')
     .positive('Must be positive')
     .integer('Must be an integer'),
-  pdfLink: Yup.string().required("Research file is required"),
+  pdfLink: Yup.string().required("Thesis file is required"),
   doi: Yup.string(),
   keywords: Yup.array().of(Yup.string()),
+  department: Yup.string().required("Department is required"),
   image: Yup.string(),
 });
 
@@ -39,7 +40,7 @@ const initialValues = {
   abstract: "",
   supervisor: "",
   pdfLink: "",
-  citations: "",
+  citations: 0,
   doi: "",
   keywords: [],
   university: "",
@@ -94,24 +95,40 @@ const ResearchForm = () => {
     setIsLoading(false);
   }
   function uploadPdf(ev) {
+    const id = toast.loading("Please wait...");
     setIsLoading(true);
     const file = ev.target.files;
     const data = new FormData();
-    data.append("pdf", file[0]);
+    data.append("pdfs", file[0]);
     axios
       .post("/upload/pdfs", data, {
         headers: {
+          Authorization: "Bearer " + token,
           "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
         const { data: filename } = response;
-        setFieldValueRef.current('pdf', filename[0]);
+        setFieldValueRef.current('pdfLink', filename[0]);
         setAddedPdfs(filename[0])
+        if (response) {
+          toast.update(id, {
+            render: "Book added successfully",
+            type: "success",
+            ...config,
+            isLoading: false,
+          });
+        }
         setIsLoading(false);
       })
       .catch(() => {
         setIsLoading(false);
+        toast.update(id, {
+          render: "Failed to add book.",
+          type: "error",
+          isLoading: false,
+          ...config,
+        });
       });
   }
   function removePdf() {
@@ -140,7 +157,7 @@ const ResearchForm = () => {
         degree: values.degree,
         department: values.department,
       };
-      const response = await axios.post("/api/admin/research", researchData, {
+      const response = await axios.post("/api/admin/theses", researchData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'
@@ -183,11 +200,11 @@ const ResearchForm = () => {
             onSubmit={handleSubmit}
             className="flex flex-col gap-[2vh] p-[4vh]"
           >
-            <h1 className="text-[4.5vh]">Add a new research:</h1>
+            <h1 className="text-[4.5vh]">Add a new thesis:</h1>
             <div className="form-control">
               <div className="form-control-input">
                 <label htmlFor="title">Title</label>
-                <Field type="text" name="title" placeholder="Write the research's title." />
+                <Field type="text" name="title" placeholder="Write the thesis's title." />
                 <ErrorMessage name="title" component="div"
                   className="invalid-feedback" />
               </div>
@@ -301,7 +318,7 @@ const ResearchForm = () => {
 
 
               <div className="form-control__collection">
-                <label htmlFor="pdf" className="label-upload">Upload research&rsquo;s main PDF</label>
+                <label htmlFor="pdf" className="label-upload">Upload thesis&rsquo;s main PDF</label>
                 {addedPdfs &&
                   <>
                     <div className="form-control__uploader">
@@ -353,7 +370,7 @@ const ResearchForm = () => {
                 </label>
               </div>
               <div className="form-control__collection">
-                <label htmlFor="file" className="label-upload">Upload research&rsquo;s main image</label>
+                <label htmlFor="file" className="label-upload">Upload thesis&rsquo;s main image</label>
                 {addedPhotos &&
                   <>
                     <div className="form-control__uploader">
@@ -406,7 +423,7 @@ const ResearchForm = () => {
               </div>
             </div>
             <button disabled={!isFormFilled || isSubmitting || Object.keys(errors).length !== 0 || isLoading} className="btn-3" type="submit">
-              Submit
+              Submit {console.log(errors)}
             </button>
           </Form>
         }}

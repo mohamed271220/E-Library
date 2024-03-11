@@ -30,7 +30,7 @@ const imageUpload = multer({
 });
 
 const pdfUpload = multer({
-  limits: 70 * 1024 * 1024,
+  limits: 70 * 1024 * 1024 * 1024,
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, "uploads/pdfs");

@@ -93,7 +93,6 @@ app.post("/upload/pdfs", isAdmin, pdfUpload.array("pdfs", 5), async (req, res) =
         const { path: filePath, originalname } = req.files[i];
         const ext = path.extname(originalname);
         const newPath = filePath + ext;
-
         if (fs.existsSync(filePath)) {
             const file = bucket.file(originalname);
             fs.createReadStream(filePath)

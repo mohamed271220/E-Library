@@ -12,7 +12,7 @@ import { getCategories } from "../../constants/Http";
 const journalSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   publisher: Yup.string().required("Publisher is required"),
-  iSBN: Yup.string().required("ISBN is required"),
+  iSSN: Yup.string().required("ISSN is required"),
   subject: Yup.string().required("subject is required"),
   image: Yup.string(),
 });
@@ -21,7 +21,7 @@ const initialValues = {
   title: "",
   publisher: "",
   image: "",
-  iSBN: "",
+  iSSN: "",
   subject: "",
 };
 
@@ -79,7 +79,7 @@ const JournalForm = () => {
         title: values.title,
         publisher: values.publisher,
         image: values.image,
-        iSBN: values.iSBN,
+        ISSN: values.iSSN,
         subject: values.subject,
       };
       const response = await axios.post("/api/admin/journals", journalData, {
@@ -119,7 +119,7 @@ const JournalForm = () => {
         {({ values, errors, touched, handleSubmit, isSubmitting
           , handleBlur, setFieldValue,
           handleChange }) => {
-          const isFormFilled = values.title && values.publisher && values.iSBN && values.image && values.subject;
+          const isFormFilled = values.title && values.publisher && values.iSSN && values.image && values.subject;
           setFieldValueRef.current = setFieldValue;
           return <Form
             onSubmit={handleSubmit}
@@ -140,9 +140,9 @@ const JournalForm = () => {
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
-                <label htmlFor="iSBN">ISBN</label>
-                <Field type="text" name="iSBN" placeholder="Put the ISBN." />
-                <ErrorMessage name="iSBN" component="div"
+                <label htmlFor="iSSN">ISSN</label>
+                <Field type="text" name="iSSN" placeholder="Put the ISSN." />
+                <ErrorMessage name="iSSN" component="div"
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">

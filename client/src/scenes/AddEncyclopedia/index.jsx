@@ -82,7 +82,7 @@ const EncyclopediaForm = () => {
         iSBN: values.iSBN,
         subject: values.subject,
       };
-      const response = await axios.post("/api/admin/encyclopedia", encyclopediaData, {
+      const response = await axios.post("/api/admin/encyclopedias", encyclopediaData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'

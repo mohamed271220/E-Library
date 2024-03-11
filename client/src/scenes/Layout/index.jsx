@@ -76,11 +76,15 @@ const Layout = () => {
           </div>
           <nav className={sidebar ? "nav-menu active-menu col-span-3" : "nav-menu col-span-3"}>
             <ul className="nav-menu-items" onClick={showSidebar}>
-              <li className="navbar-toggle items-center justify-between px-[3vh]">
-                <img className="w-20 h-20" src={Logo} alt="logo" />
-                <Link to="#" className="ml-[1rem] menu-bars !border-none transform transition-transform duration-500 hover:rotate-180 hover:bg-slate-200 hover:bg-opacity-20 rounded-full">
-                  <IoIosArrowForward color="#e2e8f0" />
+              <li className="navbar-toggle flex-end items-center justify-between ">
+                <Link to="#" className=" flex items-center justify-center bg-white shadow-md menu-bars pr-4 !border-none  rounded-l-full">
+                  <span className="m-0 flex transform transition-transform duration-500 hover:rotate-180 bg-gray-100 shadow-md rounded-full text-[3vh]">
+                    <IoIosArrowForward  color="dim-blue" />
+                  </span>
                 </Link>
+              </li>
+              <li className="navbar-toggle items-center justify-center ">
+                <img className="w-20 h-20" src={Logo} alt="logo" />
               </li>
               <ul>
                 {SidebarData.map((item, index) => {
@@ -94,26 +98,16 @@ const Layout = () => {
                   );
                 })}
               </ul>
-
-              {
-                user?.role === "admin" && <AdminAccordion />
-              }
-
-              {
-                !user ? <li key={10} className="nav-text ">
-
+              {user?.role === "admin" && <AdminAccordion />}
+              {!user ? <li key={10} className="nav-text ">
+              </li> : <>
+                <li key={10} className="nav-text">
+                  <button onClick={logout} >
+                    <BiSolidLogInCircle color="white" />
+                    <span>Logout</span>
+                  </button>
                 </li>
-                  :
-                  <>
-
-                    <li key={10} className="nav-text">
-                      <button onClick={logout} >
-                        <BiSolidLogInCircle color="white" />
-                        <span>Logout</span>
-                      </button>
-                    </li>
-
-                  </>
+              </>
               }
             </ul>
           </nav>
