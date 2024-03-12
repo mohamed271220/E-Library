@@ -5,16 +5,13 @@ import { useLocation } from 'react-router-dom';
 const Pagination = ({
     currentPage,
     changePage,
-    totalPages
+    totalPages,
+    setCurrentPage
 }) => {
     const location = useLocation();
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         const page = searchParams.get('page');
-
-        if (page !== null && page !== currentPage) {
-            changePage(Number(page));
-        }
     }, [location, currentPage, changePage]);
 
     const scrollToTop = () => {
@@ -24,12 +21,13 @@ const Pagination = ({
         });
     };
 
+
     return (
-        <div className="Pagination w-full flex justify-center">
+        <div className="Pagination w-full flex justify-center text-white">
             <ul className="flex flex-row flex-wrap justify-center w-[80%] items-center gap-[2vh]">
                 {currentPage > 1 && (
-                    <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
-                        <Link to={`?page=${currentPage - 1}`} onClick={scrollToTop}>
+                    <li className="bg-secondary hover:bg-dim-blue transition-all  px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer" onClick={() => { scrollToTop(); changePage(currentPage - 1); setCurrentPage(currentPage - 1) }}>
+                        <Link to={`?page=${currentPage - 1}`} >
                             Previous
                         </Link>
                     </li>
@@ -37,19 +35,22 @@ const Pagination = ({
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
                     <li
                         className={`${currentPage === number
-                            ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
-                            : " bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]"
+                            ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
+                            : " bg-secondary hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
                             }`}
                         key={number}
+                        onClick={() => { scrollToTop(); changePage(number); setCurrentPage(number) }}
                     >
-                        <Link to={`?page=${number}`} onClick={scrollToTop}>
+                        <Link to={`?page=${number}`}>
                             {number}
                         </Link>
                     </li>
                 ))}
                 {currentPage < totalPages && (
-                    <li className="bg-secondary px-[2vh] py-[1vh] text-[2vh] font-semibold rounded-[3px]">
-                        <Link to={`?page=${currentPage + 1}`} onClick={scrollToTop}>
+                    <li className="bg-secondary hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
+                        onClick={() => { scrollToTop(); changePage(currentPage + 1); setCurrentPage(currentPage + 1); }}
+                    >
+                        <Link to={`?page=${currentPage + 1}`} >
                             Next
                         </Link>
                     </li>

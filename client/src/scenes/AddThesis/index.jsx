@@ -222,7 +222,7 @@ const ResearchForm = () => {
               </div>
               <div className="form-control-input">
                 <label htmlFor="abstract">Abstract</label>
-                <Field type="text" name="abstract" placeholder="Put the abstract." />
+                <Field as="textarea" type="text" name="abstract" placeholder="Put the abstract." />
                 <ErrorMessage name="abstract" component="div"
                   className="invalid-feedback" />
               </div>

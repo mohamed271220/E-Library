@@ -11,16 +11,19 @@ const Home = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const { data: books, isPending, isError, error, refetch } = useQuery({
     queryKey: ["books", searchSnap, currentPage],
-    queryFn: ({ signal }) => getBooks({ signal, limit: 10, page: currentPage, search: search, category: selectedCategoryId }),
+    queryFn: ({ signal }) => getBooks({ signal, limit: 8, page: currentPage, search: search, category: selectedCategoryId }),
   });
   const { data: categories, isPending: isPendingCategories, isError: isErrorCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: ({ signal }) => getCategories({ signal }),
   });
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -80,6 +83,7 @@ const Home = ({ user }) => {
         currentPage={currentPage}
         changePage={goToPage}
         totalPages={books?.totalPages}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );

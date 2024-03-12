@@ -11,11 +11,14 @@ const Encyclopedias = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const { data: encyclopedias, isPending, isError, error, refetch } = useQuery({
     queryKey: ["encyclopedias", searchSnap, currentPage],
     queryFn: ({ signal }) => getEncyclopedias({ signal, limit: 10, page: currentPage, search: search }),
   });
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
 
   function handleSearchSubmit(event) {
@@ -66,6 +69,7 @@ const Encyclopedias = ({ user }) => {
         currentPage={currentPage}
         changePage={goToPage}
         totalPages={encyclopedias?.totalPages}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );

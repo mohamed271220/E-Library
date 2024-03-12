@@ -11,12 +11,15 @@ const Journals = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const { data: journals, isPending, isError, error, refetch } = useQuery({
     queryKey: ["journals", searchSnap, currentPage],
     queryFn: ({ signal }) => getJournals({ signal, limit: 10, page: currentPage, search: search }),
   });
-
+  
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -66,6 +69,7 @@ const Journals = ({ user }) => {
         currentPage={currentPage}
         changePage={goToPage}
         totalPages={journals?.totalPages}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );

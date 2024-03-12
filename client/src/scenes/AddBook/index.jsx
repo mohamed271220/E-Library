@@ -30,6 +30,7 @@ const BookForm = () => {
   const [addedPhotos, setAddedPhotos] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
   const setFieldValueRef = useRef();
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["categories"],
@@ -65,12 +66,14 @@ const BookForm = () => {
         setIsLoading(false);
       })
       .catch((error) => {
+        setImgErr(true);
         setIsLoading(false);
       });
     setIsLoading(false);
   }
   function removePhoto() {
     setIsLoading(true);
+
     setAddedPhotos('');
     setIsLoading(false);
   }
@@ -123,13 +126,11 @@ const BookForm = () => {
         {({ values, errors, touched, handleSubmit, isSubmitting
           , handleBlur, setFieldValue,
           handleChange }) => {
-          const isFormFilled = Object.entries(values).some(([key, value]) => {
-            // If the key is 'category' and value is not an empty string, return true
-            if (key === 'category' && value !== '') {
+          const isFormFilled = Object.entries(values).every(([key, value]) => {
+            if (key === 'category') {
               return true;
             }
-            // For all other keys, return true if the value is an empty string
-            return key !== 'category' && value === '';
+            return value !== '';
           });
           setFieldValueRef.current = setFieldValue;
           return <Form

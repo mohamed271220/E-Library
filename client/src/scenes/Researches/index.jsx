@@ -11,11 +11,14 @@ const Researches = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const { data: researches, isPending, isError, error, refetch } = useQuery({
     queryKey: ["researches", searchSnap, currentPage],
     queryFn: ({ signal }) => getResearches({ signal, limit: 10, page: currentPage, search: search }),
   });
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
 
   function handleSearchSubmit(event) {

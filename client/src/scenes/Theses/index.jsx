@@ -11,12 +11,14 @@ const Theses = ({ user }) => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState('');
-  const { currentPage, goToPreviousPage, goToPage, goToNextPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const { data: theses, isPending, isError, error, refetch } = useQuery({
     queryKey: ["theses", searchSnap, currentPage],
     queryFn: ({ signal }) => getTheses({ signal, limit: 10, page: currentPage, search: search }),
   });
-
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -66,6 +68,7 @@ const Theses = ({ user }) => {
         currentPage={currentPage}
         changePage={goToPage}
         totalPages={theses?.totalPages}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );

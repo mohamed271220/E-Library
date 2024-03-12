@@ -13,7 +13,7 @@ const News = () => {
   const searchElement = useRef();
   const [search, setSearch] = useState('');
   const [searchSnap, setSearchSnap] = useState(false);
-  const { currentPage, goToPage } = usePagination(1);
+  const { currentPage, setCurrentPage, goToPreviousPage, goToPage, goToNextPage, setRefetch } = usePagination(1);
   const { data, refetch, isPending, isError, error } = useQuery({
     queryKey: ['posts'],
     queryFn: ({ signal }) => getPosts({ signal, searchTerm: search, limit: 10, page: currentPage })
@@ -21,7 +21,10 @@ const News = () => {
   const { data: newestData, isError: newestError, isPending: newestIsPending, error: newestErrorInfo, refetch: newestRefetch } = useQuery({
     queryKey: ['newestPosts'], queryFn: ({ signal }) => getPosts({ signal, limit: 3 })
   });
-
+  
+  useEffect(() => {
+    setRefetch(refetch);
+  }, [refetch]);
 
 
 
@@ -81,6 +84,7 @@ const News = () => {
             currentPage={currentPage}
             changePage={goToPage}
             totalPages={data?.totalPages}
+            setCurrentPage={setCurrentPage}
           />
           <div className="text-center flex flex-col">
             {searchSnap !== '' && <h1 className="text-[2vh] font-semibold mx-auto">Search results : <span className="m-0 text-slate-400">{searchSnap}</span></h1>}
@@ -92,6 +96,7 @@ const News = () => {
             currentPage={currentPage}
             changePage={goToPage}
             totalPages={data?.totalPages}
+            setCurrentPage={setCurrentPage}
           />
         </div>
         <div className="w-full md:w-[30%]  p-5 rounded-lg flex flex-col justify-center items-center gap-[2vh]
