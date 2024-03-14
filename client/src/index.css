@@ -128,3 +128,25 @@
   background-color: #555;
 }
 
+table, th, td {
+  border: 1px solid;
+  border-color: rgba(128, 128, 128, 0.354);
+}
+
+th, td {
+  padding: 3vh;
+  text-align: left;
+  font-size: 2vh;
+}
+
+th, td {
+  border-bottom: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+  th, td {
+    padding: 1.5vh;
+    text-align: left;
+    font-size: 1.7vh;
+  }
+}

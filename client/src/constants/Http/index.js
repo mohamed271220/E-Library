@@ -28,6 +28,19 @@ export async function getBooks({ signal, page, limit, search, category }) {
     const data = await response.json();
     return data;
 }
+
+export async function getBookById({ signal, id }) {
+    const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/books/${id}`;
+    const response = await fetch(baseUrl, { signal });
+    if (!response.ok) {
+        const error = new Error("An error occurred while fetching the book");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data;
+}
 export async function getEncyclopedias({ signal, page, limit, search }) {
     const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/encyclopedias`;
     const params = new URLSearchParams();
@@ -51,6 +64,20 @@ export async function getEncyclopedias({ signal, page, limit, search }) {
     const data = await response.json();
     return data;
 }
+
+export async function getEncyclopediaById({ signal, id }) {
+    const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/encyclopedias/${id}`;
+    const response = await fetch(baseUrl, { signal });
+    if (!response.ok) {
+        const error = new Error("An error occurred while fetching the encyclopedia");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data;
+}
+
 export async function getJournals({ signal, page, limit, search }) {
     const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/journals`;
     const params = new URLSearchParams();
@@ -74,6 +101,20 @@ export async function getJournals({ signal, page, limit, search }) {
     const data = await response.json();
     return data;
 }
+
+export async function getJournalById({ signal, id }) {
+    const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/journals/${id}`;
+    const response = await fetch(baseUrl, { signal });
+    if (!response.ok) {
+        const error = new Error("An error occurred while fetching the journal");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data;
+}
+
 export async function getResearches({ signal, page, limit, search }) {
     const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/researches`;
     const params = new URLSearchParams();
@@ -97,6 +138,20 @@ export async function getResearches({ signal, page, limit, search }) {
     const data = await response.json();
     return data;
 }
+
+export async function getResearchById({ signal, id }) {
+    const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/researches/${id}`;
+    const response = await fetch(baseUrl, { signal });
+    if (!response.ok) {
+        const error = new Error("An error occurred while fetching the research");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data;
+}
+
 export async function getTheses({ signal, page, limit, search }) {
     const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/theses`;
     const params = new URLSearchParams();
@@ -113,6 +168,19 @@ export async function getTheses({ signal, page, limit, search }) {
     const response = await fetch(url, { signal });
     if (!response.ok) {
         const error = new Error("An error occurred while fetching the theses");
+        error.code = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data;
+}
+
+export async function getThesisById({ signal, id }) {
+    const baseUrl = `${import.meta.env.VITE_REACT_APP_API_URL}/api/library/theses/${id}`;
+    const response = await fetch(baseUrl, { signal });
+    if (!response.ok) {
+        const error = new Error("An error occurred while fetching the thesis");
         error.code = response.status;
         error.info = await response.json();
         throw error;

@@ -26,7 +26,7 @@ const Pagination = ({
         <div className="Pagination w-full flex justify-center text-white">
             <ul className="flex flex-row flex-wrap justify-center w-[80%] items-center gap-[2vh]">
                 {currentPage > 1 && (
-                    <li className="bg-secondary hover:bg-dim-blue transition-all  px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer" onClick={() => { scrollToTop(); changePage(currentPage - 1); setCurrentPage(currentPage - 1) }}>
+                    <li className="bg-gray-100 text-dim-blue font-semibold hover:text-white shadow-md   hover:bg-dim-blue transition-all  px-[2vh] py-[1vh] text-[2vh] rounded-md cursor-pointer" onClick={() => { scrollToTop(); changePage(currentPage - 1); setCurrentPage(currentPage - 1) }}>
                         <Link to={`?page=${currentPage - 1}`} >
                             Previous
                         </Link>
@@ -35,8 +35,8 @@ const Pagination = ({
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
                     <li
                         className={`${currentPage === number
-                            ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
-                            : " bg-secondary hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
+                            ? "bg-dim-blue text-white px-[2vh] py-[1vh] text-[2vh] rounded-md cursor-pointer"
+                            : " bg-gray-100 text-dim-blue font-semibold hover:text-white shadow-md   hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-md cursor-pointer"
                             }`}
                         key={number}
                         onClick={() => { scrollToTop(); changePage(number); setCurrentPage(number) }}
@@ -47,7 +47,7 @@ const Pagination = ({
                     </li>
                 ))}
                 {currentPage < totalPages && (
-                    <li className="bg-secondary hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-[3px] cursor-pointer"
+                    <li className="bg-gray-100 text-dim-blue font-semibold hover:text-white shadow-md   hover:bg-dim-blue transition-all px-[2vh] py-[1vh] text-[2vh] rounded-md cursor-pointer"
                         onClick={() => { scrollToTop(); changePage(currentPage + 1); setCurrentPage(currentPage + 1); }}
                     >
                         <Link to={`?page=${currentPage + 1}`} >

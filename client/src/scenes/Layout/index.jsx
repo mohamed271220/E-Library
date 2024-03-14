@@ -68,7 +68,7 @@ const Layout = () => {
                   src={user.image}
                   alt="pfp"
                 />
-              </div> : <NavLink className='btn-3 flex items-center bg-white text-dim-blue' to="/auth/login" >
+              </div> : <NavLink className='btn-3 flex items-center border-none shadow-xl bg-gray-200 text-dim-blue' to="/auth/login" >
                 <span className="m-0">Login</span>
               </NavLink>}
             </>
