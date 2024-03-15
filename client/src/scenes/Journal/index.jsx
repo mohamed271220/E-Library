@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { getBookById } from "../../constants/Http";
+
+import { getBookById, getJournalById } from "../../constants/Http";
 import Skeleton from "../../constants/Loading/SkeletonTwo/Skeleton";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -12,41 +13,10 @@ import { FiChevronDown, FiEdit2, FiPlusCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 
 
-const Product = () => {
+const Journal = () => {
   const dispatch = useDispatch();
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
-  const [deleteBookModalIsOpen, setDeleteBookModalIsOpen] = useState(false);
-
-  const [addEditionModalIsOpen, setAddEditionModalIsOpen] = useState(false);
-  const [editEditionModalIsOpen, setEditEditionModalIsOpen] = useState(false);
-  const [deleteEditionModalIsOpen, setEditionBookModalIsOpen] = useState(false);
-
-
-
-  function handleDeleteBookModalOpen() {
-    setDeleteBookModalIsOpen(true);
-  }
-
-  function handleAddEditionModalOpen() {
-    setAddEditionModalIsOpen(true);
-  }
-
-  function handleEditEditionModalOpen() {
-    setEditEditionModalIsOpen(true);
-  }
-
-  function handleDeleteEditionModalOpen() {
-    setEditionBookModalIsOpen(true);
-  }
-
-  function handleCloseAllModals() {
-    setDeleteBookModalIsOpen(false);
-    setAddEditionModalIsOpen(false);
-    setEditEditionModalIsOpen(false);
-    setEditionBookModalIsOpen(false);
-  }
-
 
   const user = useSelector(state => state.auth.data);
 
@@ -76,7 +46,7 @@ const Product = () => {
       // console.log(response);
       if (response) {
         toast.update(id, {
-          render: "Product added to cart",
+          render: "Journal added to cart",
           type: "success",
           ...config,
           isLoading: false,
@@ -84,7 +54,7 @@ const Product = () => {
       }
     } catch (error) {
       toast.update(id, {
-        render: "Failed to add product to cart",
+        render: "Failed to add journal to cart",
         type: "error",
         isLoading: false,
         ...config,
@@ -92,22 +62,20 @@ const Product = () => {
     }
   };
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['book', id],
-    queryFn: ({ signal }) => getBookById({ signal, id }),
+    queryKey: ['journal', id],
+    queryFn: ({ signal }) => getJournalById({ signal, id }),
 
   })
 
-  const bookEdtions = [
+  const journalVolume = [
     {
-      editionNumber: 1,
+      volumeNumber: 1,
       publicationDate: "2021-10-10",
-      changes: "First EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst EditionFirst Edition",
       pdfLink: "https://storage.googleapis.com/furniro/Ph.d Neutrosophic.pdf",
     },
     {
-      editionNumber: 1,
+      volumeNumber: 1,
       publicationDate: "2021-10-10",
-      changes: "First Edition",
       pdfLink: "https://storage.googleapis.com/furniro/Ph.d Neutrosophic.pdf",
     }
   ]
@@ -125,25 +93,26 @@ const Product = () => {
       {
         true &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
-          <Link to={`/admin/addBook?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
+          <Link to={`/admin/addJournal?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
           <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
         </div>
       }
-      <div className="product flex flex-col gap-2 ">
+      <div className="journal flex flex-col gap-2 ">
         <div className="info w-full md:px-9 px-4 gap-4 py-[2vh] flex md:flex-row flex-col ">
           {/* images  */}
           <div className="md:mx-0 mx-auto flex lg:flex-row flex-col-reverse gap-[2vh] w-full md:w-[50%]">
-            <img className="md:w-[85%] md:h-[110vh] rounded-lg" src={data.book.image} alt="" />
+            <img className="md:w-[85%] md:h-[110vh] rounded-lg" src={data.journal.image} alt="" />
           </div>
           {/* details */}
           <div className="flex flex-col gap-4 w-full md:w-[40%]">
-            <h2 className="text-[4.5vh] fond-semibold">{data.book.title}</h2>
-            <h2 className="text-[2vh]  font-bold">Written By :<p className="text-secondary">{" "}{data.book.author}</p> </h2>
+            <h2 className="text-[4.5vh] fond-semibold">{data.journal.title}</h2>
+            <h2 className="text-[2vh]  font-bold">Published By :<p className="text-secondary">{" "}{data.journal.publisher}</p> </h2>
             <div>
-              <p className="text-[2vh] font-bold">Description :</p>
+              <p className="text-[2vh] font-bold">Subject :</p>
               <hr className="w-[100%]" />
-              <p className="text-[1.7vh]">{data.book.description}</p>
+              <p className="text-[1.7vh]">{data.journal.subject}</p>
             </div>
+            <h2 className="text-[2vh]  font-semibold">ISSN :<p className="text-secondary">{" "}{data.journal.ISSN}</p> </h2>
             <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
               <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
                 <button onClick={() => {
@@ -153,13 +122,13 @@ const Product = () => {
           </div>
         </div>
         {/* editions */}
-        <div className="editions w-full md:px-9 px-4 gap-4 py-[2vh] flex  flex-col ">
-          <h2 className="text-[5vh] fond-semibold">Editions</h2>
+        <div className="volumes w-full md:px-9 px-4 gap-4 py-[2vh] flex  flex-col ">
+          <h2 className="text-[5vh] fond-semibold">Volumes</h2>
           <div className="flex flex-col gap-4 w-full overflow-auto">
             <table className="table-auto w-full ">
               <thead className="bg-gray-100 ">
                 <tr>
-                  <th>Edition Number</th>
+                  <th>Volume Number</th>
                   <th>Publication Date</th>
                   <th> - </th>
                   {/* user?.role === "admin" */}
@@ -172,16 +141,15 @@ const Product = () => {
               <tbody>
 
                 {
-                  bookEdtions.map((edition, index) => {
+                  journalVolume.map((volume, index) => {
                     return (
                       <React.Fragment key={index}>
                         <tr
                           onClick={() => setOpenedIndex(index === openedIndex ? null : index)}
                           className={`cursor-pointer ${openedIndex === index ? 'bg-blue-200 border-b-0' : ''}`}
                         >
-
-                          <td>{edition.editionNumber}</td>
-                          <td>{edition.publicationDate}</td>
+                          <td>{volume.volumeNumber}</td>
+                          <td>{volume.publicationDate}</td>
                           <td>
                             <button className="btn-3 px-[1vh] bg-dim-blue text-[1.6vh] font-normal text-white flex items-center">
                               open
@@ -201,11 +169,7 @@ const Product = () => {
                           {openedIndex === index && (
                             <motion.tr className="bg-blue-100" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
                               <td colSpan="4">
-                                <div className="flex flex-col ">
-                                  <h2 className="text-[1.9vh] font-bold">Changes :</h2>
-                                  <p className="text-[1.6vh] py-[2vh]">{edition.changes}</p>
-                                </div>
-                                <iframe src={edition.pdfLink} style={{ width: '100%', height: '500px' }}></iframe>
+                                <iframe src={volume.pdfLink} style={{ width: '100%', height: '500px' }}></iframe>
                               </td>
                             </motion.tr>
                           )}
@@ -214,15 +178,15 @@ const Product = () => {
                     )
                   })
                 }
-                {/* user?.role === "admin" */}      {
-                  true && <tr className="border-0">
-                    <td colSpan="4" className="text-center cursor-pointer">
-                      <button className="flex items-center justify-center">
-                        <FiPlusCircle className="mr-2" color="green-400" />
-                        Add new editions
-                      </button>
-                    </td>
-                  </tr>}
+       {/* user?.role === "admin" */}      {         
+        true  &&  <tr className="border-0">
+                  <td colSpan="4" className="text-center cursor-pointer">
+                    <button className="flex items-center justify-center">
+                      <FiPlusCircle className="mr-2" color="green-400" />
+                      Add new volumes
+                    </button>
+                  </td>
+                </tr>}
               </tbody>
             </table>
           </div>
@@ -244,4 +208,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Journal;

@@ -1,13 +1,13 @@
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../constants/Http";
+import { getCategories, getJournalById } from "../../constants/Http";
 
 const journalSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -17,20 +17,45 @@ const journalSchema = Yup.object().shape({
   image: Yup.string(),
 });
 
-const initialValues = {
-  title: "",
-  publisher: "",
-  image: "",
-  iSSN: "",
-  subject: "",
-};
+
 
 
 const JournalForm = () => {
+  const location = useLocation();
+  const journalId = new URLSearchParams(location.search).get('id');
   const [addedPhotos, setAddedPhotos] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const setFieldValueRef = useRef();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['journal', journalId],
+    queryFn: ({ signal }) => getJournalById({ signal, id: journalId }),
+    enabled: !!journalId,
+  })
+
+
+  const initialValues = data
+  ? {
+      title: data.journal.title,
+      publisher: data.journal.publisher,
+      image: data.journal.image,
+      iSSN: data.journal.ISSN,
+      subject: data.journal.subject 
+    }
+  : {
+      title: "",
+      publisher: "",
+      image: "",
+      iSSN: "",
+      subject: ""
+    };
+
+  useEffect(() => {
+    if (data) {
+      setAddedPhotos([data.journal.image]);
+    }
+  }, [data]);
 
   const token = useSelector((state) => state.auth.token);
   const config = {
@@ -82,7 +107,14 @@ const JournalForm = () => {
         ISSN: values.iSSN,
         subject: values.subject,
       };
-      const response = await axios.post("/api/admin/journals", journalData, {
+      const response = data
+      ? await axios.put(`/api/admin/journals/${journalId}`, journalData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        })
+      : await axios.post("/api/admin/journals", journalData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'

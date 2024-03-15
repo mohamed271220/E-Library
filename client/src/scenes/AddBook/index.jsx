@@ -1,13 +1,13 @@
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../constants/Http";
+import { getBookById, getCategories } from "../../constants/Http";
 
 const bookSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -17,16 +17,11 @@ const bookSchema = Yup.object().shape({
   category: Yup.string(),
 });
 
-const initialValues = {
-  title: "",
-  author: "",
-  image: "",
-  description: "",
-  category: ""
-};
 
 
 const BookForm = () => {
+  const location = useLocation();
+  const bookId = new URLSearchParams(location.search).get('id');
   const [addedPhotos, setAddedPhotos] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +31,35 @@ const BookForm = () => {
     queryKey: ["categories"],
     queryFn: ({ signal }) => getCategories({ signal }),
   });
+
+  const { data: bookData, isPending: bookIsPending, isError: bookIsError, error: bookError } = useQuery({
+    queryKey: ['book', bookId],
+    queryFn: ({ signal }) => getBookById({ signal, id: bookId }),
+    enabled: !!bookId,
+  });
+
+  const initialValues = bookData
+    ? {
+      title: bookData.book.title,
+      author: bookData.book.author,
+      image: bookData.book.image,
+      description: bookData.book.description,
+      category: bookData.book.category || ""
+    }
+    : {
+      title: "",
+      author: "",
+      image: "",
+      description: "",
+      category: ""
+    };
+
+  useEffect(() => {
+    if (bookData) {
+      setAddedPhotos([bookData.book.image]);
+    }
+  }, [bookData]);
+
 
   const token = useSelector((state) => state.auth.token);
   const config = {
@@ -89,12 +113,19 @@ const BookForm = () => {
         description: values.description,
         category: values.category === "" ? null : values.category,
       };
-      const response = await axios.post("/api/admin/books", postData, {
-        headers: {
-          Authorization: "Bearer " + token,
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = bookData
+        ? await axios.put(`/api/admin/books/${bookId}`, postData, {
+            headers: {
+              Authorization: "Bearer " + token,
+              'Content-Type': 'application/json'
+            },
+          })
+        : await axios.post("/api/admin/books", postData, {
+            headers: {
+              Authorization: "Bearer " + token,
+              'Content-Type': 'application/json'
+            },
+          });
       if (response) {
         toast.update(id, {
           render: "Book added successfully",

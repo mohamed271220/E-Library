@@ -21,6 +21,9 @@ import Encyclopedias from "./scenes/Encyclopedias";
 import Researches from "./scenes/Researches";
 import Theses from "./scenes/Theses";
 import Book from "./scenes/Book";
+import Journal from "./scenes/Journal";
+import Encyclopedia from "./scenes/Encyclopedia";
+import Thesis from "./scenes/Thesis";
 
 axios.defaults.baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -80,13 +83,13 @@ const App = () => {
         <Route path="/books" element={<Home />} />
         <Route path="/books/:id" element={<Book />} />
         <Route path="/journals" element={<Journals />} />
-        <Route path="/journals/:id" />
+        <Route path="/journals/:id" element={<Journal />} />
         <Route path="/encyclopedias" element={<Encyclopedias />} />
-        <Route path="/encyclopedias/:id" />
+        <Route path="/encyclopedias/:id" element={<Encyclopedia />} />
         <Route path="/researches" element={<Researches />} />
         <Route path="/researches/:id" />
         <Route path="/theses" element={<Theses />} />
-        <Route path="/theses/:id" />
+        <Route path="/theses/:id" element={<Thesis />} />
         <Route path="/news" element={<News />} />
         <Route path="/news/:id" />
         {/* Admin routes  */}

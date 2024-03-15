@@ -6,7 +6,7 @@ const Research = require("../models/research");
 const Thesis = require("../models/thesis");
 
 
-exports.getBook = async (req, res) => {
+exports.getBook = async (req, res, next) => {
     const { bookId } = req.params;
     try {
         let book = await Book.findById(bookId);
@@ -20,7 +20,7 @@ exports.getBook = async (req, res) => {
 }
 
 
-exports.getBooks = async (req, res) => {
+exports.getBooks = async (req, res, next) => {
     const { page = 1, limit = 10, category, search } = req.query;
     try {
         let filter = {};

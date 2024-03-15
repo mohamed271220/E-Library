@@ -1,13 +1,13 @@
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../constants/Http";
+import { getCategories, getEncyclopediaById } from "../../constants/Http";
 
 const encyclopediaSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -17,20 +17,42 @@ const encyclopediaSchema = Yup.object().shape({
   image: Yup.string(),
 });
 
-const initialValues = {
-  title: "",
-  publisher: "",
-  image: "",
-  iSBN: "",
-  subject: "",
-};
-
 
 const EncyclopediaForm = () => {
+  const location = useLocation();
+  const encId = new URLSearchParams(location.search).get('id');
   const [addedPhotos, setAddedPhotos] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const setFieldValueRef = useRef();
+
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['encyclopedia', encId],
+    queryFn: ({ signal }) => getEncyclopediaById({ signal, encId: id }),
+    enabled: !!encId,
+  })
+  const initialValues = data.encyclopedia
+  ? {
+      title: data.encyclopedia.title,
+      publisher: data.encyclopedia.publisher,
+      image: data.encyclopedia.image,
+      iSBN: data.encyclopedia.ISBN,
+      subject: data.encyclopedia.subject || ""
+    }
+  : {
+      title: "",
+      publisher: "",
+      image: "",
+      iSBN: "",
+      subject: ""
+    };
+
+    useEffect(() => {
+      if (data) {
+        setAddedPhotos([data.encyclopedia.image]);
+      }
+    }, [data]);
 
   const token = useSelector((state) => state.auth.token);
   const config = {
@@ -82,7 +104,14 @@ const EncyclopediaForm = () => {
         iSBN: values.iSBN,
         subject: values.subject,
       };
-      const response = await axios.post("/api/admin/encyclopedias", encyclopediaData, {
+      const response = data
+      ? await axios.put(`/api/admin/encyclopedias/${encId}`, encyclopediaData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        })
+      : await axios.post("/api/admin/encyclopedias", encyclopediaData, {
         headers: {
           Authorization: "Bearer " + token,
           'Content-Type': 'application/json'

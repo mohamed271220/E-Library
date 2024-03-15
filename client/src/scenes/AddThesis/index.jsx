@@ -1,13 +1,13 @@
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../constants/Http";
+import { getCategories, getResearchById, getThesisById } from "../../constants/Http";
 
 const researchSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -32,29 +32,64 @@ const researchSchema = Yup.object().shape({
   image: Yup.string(),
 });
 
-const initialValues = {
-  title: "",
-  author: "",
-  image: "",
-  year: 1900,
-  abstract: "",
-  supervisor: "",
-  pdfLink: "",
-  citations: 0,
-  doi: "",
-  keywords: [],
-  university: "",
-  degree: "",
-  department: "",
-};
+
 
 
 const ResearchForm = () => {
+  const location = useLocation();
+  const thesisId = new URLSearchParams(location.search).get('id');
   const [addedPhotos, setAddedPhotos] = useState();
   const [addedPdfs, setAddedPdfs] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const setFieldValueRef = useRef();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['thesis', thesisId],
+    queryFn: ({ signal }) => getThesisById({ signal, id: thesisId }),
+    enabled: !!thesisId,
+  })
+
+  const initialValues = data
+    ? {
+      title: data.thesis.title,
+      author: data.thesis.author,
+      image: data.thesis.image,
+      year: data.thesis.year,
+      abstract: data.thesis.abstract,
+      supervisor: data.thesis.supervisor,
+      pdfLink: data.thesis.pdfLink,
+      citations: data.thesis.citations,
+      doi: data.thesis.doi,
+      keywords: data.thesis.keywords || [],
+      university: data.thesis.university,
+      degree: data.thesis.degree,
+      department: data.thesis.department,
+    }
+    : {
+      title: "",
+      author: "",
+      image: "",
+      year: 1900,
+      abstract: "",
+      supervisor: "",
+      pdfLink: "",
+      citations: 0,
+      doi: "",
+      keywords: [],
+      university: "",
+      degree: "",
+      department: "",
+    };
+
+  useEffect(() => {
+    if (data) {
+      setAddedPhotos([data?.thesis?.image]);
+      setAddedPdfs([data?.thesis?.pdfLink]);
+    }
+  }, [data]);
+
+
 
   const token = useSelector((state) => state.auth.token);
   const config = {
@@ -142,7 +177,7 @@ const ResearchForm = () => {
     const id = toast.loading("Please wait...");
     setIsLoading(true);
     try {
-      const researchData = {
+      const thesisData = {
         title: values.title,
         author: values.author,
         image: values.image,
@@ -157,12 +192,19 @@ const ResearchForm = () => {
         degree: values.degree,
         department: values.department,
       };
-      const response = await axios.post("/api/admin/theses", researchData, {
-        headers: {
-          Authorization: "Bearer " + token,
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = data
+        ? await axios.put(`/api/admin/theses/${thesisId}`, thesisData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        })
+        : await axios.post("/api/admin/theses", thesisData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        });
       if (response) {
         toast.update(id, {
           render: "Book added successfully",
@@ -322,7 +364,7 @@ const ResearchForm = () => {
                 {addedPdfs &&
                   <>
                     <div className="form-control__uploader">
-                      <p>{addedPdfs}</p>
+                      <iframe src={addedPdfs} style={{ width: '100%'}}></iframe>
                       <button
                         onClick={() => removePdf()}
                         className="btn-1 "

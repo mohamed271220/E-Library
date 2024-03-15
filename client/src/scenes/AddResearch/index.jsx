@@ -1,13 +1,13 @@
 import { Formik, Form, FieldArray, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../constants/Http";
+import { getCategories, getJournalById, getResearchById } from "../../constants/Http";
 
 const researchSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -29,26 +29,55 @@ const researchSchema = Yup.object().shape({
   image: Yup.string(),
 });
 
-const initialValues = {
-  title: "",
-  author: "",
-  image: "",
-  year: 1900,
-  abstract: "",
-  specialization: "",
-  pdfLink: "",
-  citations: 0,
-  doi: "",
-  keywords: [],
-};
 
 
 const ResearchForm = () => {
+  const location = useLocation();
+  const researchId = new URLSearchParams(location.search).get('id');
   const [addedPhotos, setAddedPhotos] = useState();
   const [addedPdfs, setAddedPdfs] = useState();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const setFieldValueRef = useRef();
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ['research', researchId],
+    queryFn: ({ signal }) => getResearchById({ signal, id: researchId }),
+    enabled: !!researchId,
+  })
+
+  const initialValues = data
+    ? {
+      title: data.research.title,
+      author: data.research.author,
+      image: data.research.image,
+      year: data.research.year,
+      abstract: data.research.abstract,
+      specialization: data.research.specialization,
+      pdfLink: data.research.pdfLink,
+      citations: data.research.citations,
+      doi: data.research.doi,
+      keywords: data.research.keywords || [],
+    }
+    : {
+      title: "",
+      author: "",
+      image: "",
+      year: 1900,
+      abstract: "",
+      specialization: "",
+      pdfLink: "",
+      citations: 0,
+      doi: "",
+      keywords: [],
+    };
+  useEffect(() => {
+    if (data) {
+      setAddedPhotos([data.research.image]);
+      setAddedPdfs([data.research.pdfLink]);
+    }
+  }, [data]);
+
 
   const token = useSelector((state) => state.auth.token);
   const config = {
@@ -149,12 +178,19 @@ const ResearchForm = () => {
         doi: values.doi,
         keywords: values.keywords,
       };
-      const response = await axios.post("/api/admin/researches", researchData, {
-        headers: {
-          Authorization: "Bearer " + token,
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = data
+        ? await axios.put(`/api/admin/researches/${researchId}`, researchData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        })
+        : await axios.post("/api/admin/researches", researchData, {
+          headers: {
+            Authorization: "Bearer " + token,
+            'Content-Type': 'application/json'
+          },
+        });
       if (response) {
         toast.update(id, {
           render: "Book added successfully",
@@ -295,7 +331,7 @@ const ResearchForm = () => {
                 {addedPdfs &&
                   <>
                     <div className="form-control__uploader">
-                      <p>{addedPdfs}</p>
+                      <iframe src={addedPdfs} style={{ width: '100%' }}></iframe>
                       <button
                         onClick={() => removePdf()}
                         className="btn-1 "
