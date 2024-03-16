@@ -126,8 +126,9 @@ exports.editBookEdition = async (req, res, next) => {
         if (!book) {
             return res.status(404).json({ message: "Book not found" });
         }
-        const edition = book.editions.find(edition => edition.editionNumber === editionNumber);
+        const edition = book.editions.find(edition => edition.id === editionNumber);
         if (!edition) {
+            console.log(editionNumber);
             return res.status(404).json({ message: "Edition not found" });
         }
 

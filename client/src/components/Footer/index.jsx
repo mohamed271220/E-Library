@@ -4,7 +4,7 @@ import Pn from '../../assets/images/pn.jpg'
 
 const index = () => {
   return (
-    <div className='flex flex-col items-center  w-full bg-black p-[3vh] px-[9vh]'>
+    <div className=' absolute  w-full left-0 right-0 flex flex-col items-center bg-black mt-[15vh] p-[3vh] px-[9vh]'>
       <h1 className='text-[3.5vh] text-gray-200 border-b-2 pb-3 w-fit' >In honor of:</h1>
       <div className="flex  md:flex-row flex-col md:gap-x-10 gap-y-5 md:p-10 p-3 gap- w-full  text-white text-center  h-full">
         <div className='md:w-[50%] w-full flex flex-col  items-center gap-[2vh]'>
