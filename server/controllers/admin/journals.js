@@ -100,7 +100,7 @@ exports.editJournalVolume = async (req, res, next) => {
         if (!journal) {
             throw new Error('Journal not found');
         }
-        const volume = journal.volumes.find(volume => volume.volumeNumber === volumeNumber);
+        const volume = journal.volumes.find(volume => volume.id === volumeNumber);
         if (!volume) {
             throw new Error('Volume not found');
         }
@@ -126,7 +126,7 @@ exports.deleteJournalVolume = async (req, res, next) => {
         if (!journal) {
             throw new Error('Journal not found');
         }
-        const index = journal.volumes.findIndex(volume => volume.volumeNumber === volumeNumber);
+        const index = journal.volumes.findIndex(volume => volume.id === volumeNumber);
         if (index === -1) {
             throw new Error('Volume not found');
         }

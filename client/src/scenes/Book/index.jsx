@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { getBookById } from "../../constants/Http";
+import { getBookById, saveItemToLibrary } from "../../constants/Http";
 import Skeleton from "../../constants/Loading/SkeletonTwo/Skeleton";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AddEdition from '../../components/AddEdition';
 
 const Product = () => {
+  const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
@@ -62,37 +63,7 @@ const Product = () => {
     theme: "light",
   };
 
-  const addToLibraryHandler = async () => {
-    const id = toast.loading("Please wait...");
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/`,
-        { number: 1 },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // console.log(response);
-      if (response) {
-        toast.update(id, {
-          render: "Product added to cart",
-          type: "success",
-          ...config,
-          isLoading: false,
-        });
-      }
-    } catch (error) {
-      toast.update(id, {
-        render: "Failed to add product to cart",
-        type: "error",
-        isLoading: false,
-        ...config,
-      });
-    }
-  };
-  const { data, isPending, isError, error,refetch } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['book', id],
     queryFn: ({ signal }) => getBookById({ signal, id }),
 
@@ -105,7 +76,29 @@ const Product = () => {
     return <div>Error: {error.message}</div>;
   }
 
+
+  const handleSaveItem = async (item) => {
+    const signal = new AbortController().signal;
+    const id = toast.loading("Please wait...");
+    try {
+      await saveItemToLibrary({ signal, id: item.id, type: item.type, token: token });
+      toast.update(id, {
+        render: "Item added successfully",
+        type: "success",
+        ...config,
+        isLoading: false,
+      });
+    } catch (error) {
+      toast.update(id, {
+        render: "Item already added",
+        type: "error",
+        isLoading: false,
+        ...config,
+      });
+    }
+  };
   return (
+    <>
     <div className="w-full flex flex-col gap-3 relative">
       {addEditionModalIsOpen && <AddEdition editionData={editionData} user={user} isOpen={addEditionModalIsOpen} onClose={handleCloseAllModals} refetch={refetch} />}
       {
@@ -133,8 +126,7 @@ const Product = () => {
             </div>
             <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
               <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
-                <button onClick={() => {
-                }}>Add to library </button>{" "}
+                <button onClick={() => handleSaveItem({ id: data.book._id, type: "books" })} >Add to library </button>
               </div>
             </div>
           </div>
@@ -229,6 +221,7 @@ const Product = () => {
         theme="light"
       />
     </div>
+      </>
   );
 };
 

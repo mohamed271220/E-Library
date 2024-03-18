@@ -24,6 +24,9 @@ import Book from "./scenes/Book";
 import Journal from "./scenes/Journal";
 import Encyclopedia from "./scenes/Encyclopedia";
 import Thesis from "./scenes/Thesis";
+import NotFound from "./scenes/404";
+import Post from "./scenes/Post";
+import Profile from "./scenes/Profile";
 
 axios.defaults.baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -91,7 +94,9 @@ const App = () => {
         <Route path="/theses" element={<Theses />} />
         <Route path="/theses/:id" element={<Thesis />} />
         <Route path="/news" element={<News />} />
-        <Route path="/news/:id" />
+        <Route path="/news/:id" element={<Post />} />
+        <Route path="/library" element={user ?
+          <Profile /> : <Navigate to="/books" />} />
         {/* Admin routes  */}
         <Route path="/admin/addBook" element={user?.role === "admin" ?
           <AddBook /> : <Navigate to="/books" />} />
@@ -108,6 +113,8 @@ const App = () => {
         <Route path="/admin/addPost" element={user?.role === "admin" ?
           <AddPost /> : <Navigate to="/books" />} />
 
+
+        <Route path="*" element={<NotFound />} />
       </Route>
       <Route
         element={<EntryLayout />}

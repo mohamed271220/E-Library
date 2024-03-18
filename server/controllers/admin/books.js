@@ -154,7 +154,7 @@ exports.deleteBookEdition = async (req, res, next) => {
         if (!book) {
             throw new Error('Book not found');
         }
-        const index = book.editions.findIndex(edition => edition.editionNumber === editionNumber);
+        const index = book.editions.findIndex(edition => edition.id === editionNumber);
         if (index === -1) {
             throw new Error('Edition not found');
         }

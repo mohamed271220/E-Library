@@ -11,13 +11,18 @@ import { AiFillDelete, AiFillStar } from "react-icons/ai";
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { FiChevronDown, FiEdit2, FiPlusCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
+import AddVolumeModal from "../../components/AddVolume";
 
 
 const Encyclopedia = () => {
   const dispatch = useDispatch();
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
-
+  const [editionData, setEdition] = useState(null)
+  const [addVolumeModalIsOpen, setAddVolumeModalIsOpen] = useState(false);
+  function handleCloseAllModals() {
+    setAddVolumeModalIsOpen(false);
+  }
   const user = useSelector(state => state.auth.data);
 
   const config = {
@@ -61,24 +66,13 @@ const Encyclopedia = () => {
       });
     }
   };
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['encyclopedia', id],
     queryFn: ({ signal }) => getEncyclopediaById({ signal, id }),
 
   })
 
-  const journalVolume = [
-    {
-      volumeNumber: 1,
-      publicationDate: "2021-10-10",
-      pdfLink: "https://storage.googleapis.com/furniro/Ph.d Neutrosophic.pdf",
-    },
-    {
-      volumeNumber: 1,
-      publicationDate: "2021-10-10",
-      pdfLink: "https://storage.googleapis.com/furniro/Ph.d Neutrosophic.pdf",
-    }
-  ]
+
 
   if (isPending) {
     return <Skeleton type={'menu'} />;
@@ -89,9 +83,9 @@ const Encyclopedia = () => {
 
   return (
     <div className="w-full flex flex-col gap-3 relative">
-      {/* user && user.role === "admin" */}
+      {addVolumeModalIsOpen && <AddVolumeModal type={"encyclopedias"} editionData={editionData} user={user} isOpen={addVolumeModalIsOpen} onClose={handleCloseAllModals} refetch={refetch} />}
       {
-        true &&
+        user && user.role === "admin" &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
           <Link to={`/admin/addEncyclopedia?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
           <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
@@ -131,9 +125,8 @@ const Encyclopedia = () => {
                   <th>Volume Number</th>
                   <th>Publication Date</th>
                   <th> - </th>
-                  {/* user?.role === "admin" */}
                   {
-                    true && (
+                    user && user.role === "admin" && (
                       <th>Actions</th>
                     )}
                 </tr>
@@ -141,7 +134,7 @@ const Encyclopedia = () => {
               <tbody>
 
                 {
-                  journalVolume.map((volume, index) => {
+                  data.encyclopedia.volumes.map((volume, index) => {
                     return (
                       <React.Fragment key={index}>
                         <tr
@@ -149,18 +142,18 @@ const Encyclopedia = () => {
                           className={`cursor-pointer ${openedIndex === index ? 'bg-blue-200 border-b-0' : ''}`}
                         >
                           <td>{volume.volumeNumber}</td>
-                          <td>{volume.publicationDate}</td>
+                          <td>{volume.publicationYear}</td>
                           <td>
                             <button className="btn-3 px-[1vh] bg-dim-blue text-[1.6vh] font-normal text-white flex items-center">
                               open
                               <FiChevronDown color="white" className={`transition-transform duration-500 ml-2 ${openedIndex === index ? 'rotate-180' : ''}`} />
                             </button>
                           </td>
-                          {/* user?.role === "admin" */}
+
                           {
-                            true && (
+                            user && user.role === "admin" && (
                               <td>
-                                <button className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white"><FiEdit2 color="white" /></button>
+                                <button onClick={() => { setEdition(volume); setAddVolumeModalIsOpen(true) }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white"><FiEdit2 color="white" /></button>
                                 <button className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white ml-2"><AiFillDelete color="white" /></button>
                               </td>
                             )}
@@ -178,15 +171,15 @@ const Encyclopedia = () => {
                     )
                   })
                 }
-       {/* user?.role === "admin" */}      {         
-        true  &&  <tr className="border-0">
-                  <td colSpan="4" className="text-center cursor-pointer">
-                    <button className="flex items-center justify-center">
-                      <FiPlusCircle className="mr-2" color="green-400" />
-                      Add new volumes
-                    </button>
-                  </td>
-                </tr>}
+                {
+                  user && user.role === "admin" && <tr className="border-0">
+                    <td colSpan="4" className="text-center cursor-pointer"  onClick={() => { setEdition(null); setAddVolumeModalIsOpen(true) }}>
+                      <button className="flex items-center justify-center">
+                        <FiPlusCircle className="mr-2" color="green-400" />
+                        Add new volumes
+                      </button>
+                    </td>
+                  </tr>}
               </tbody>
             </table>
           </div>

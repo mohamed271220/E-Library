@@ -103,7 +103,7 @@ exports.editEncyclopediaVolume = async (req, res, next) => {
         if (!encyclopedia) {
             return res.status(404).json({ message: 'Encyclopedia not found' });
         }
-        const volume = encyclopedia.volumes.find(volume => volume.volumeNumber === volumeNumber);
+        const volume = encyclopedia.volumes.find(volume => volume.id === volumeNumber);
         if (!volume) {
             return res.status(404).json({ message: 'Volume not found' });
         }
@@ -130,7 +130,7 @@ exports.deleteEncyclopediaVolume = async (req, res, next) => {
         if (!encyclopedia) {
             throw new Error('Encyclopedia not found');
         }
-        const index = encyclopedia.volumes.findIndex(volume => volume.volumeNumber === volumeNumber);
+        const index = encyclopedia.volumes.findIndex(volume => volume.id === volumeNumber);
         if (index === -1) {
             throw new Error('Volume not found');
         }

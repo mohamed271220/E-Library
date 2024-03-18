@@ -9,7 +9,7 @@ const encyclopediaSchema = new Schema({
     image: { type: String, required: true, min: 2, max: 500 },
     volumes: [{
         volumeNumber: { type: Number, required: true },
-        publicationYear: { type: Number, required: true },
+        publicationYear: { type: Date, required: true },
         pdfLink: { type: String, required: true },
     }]
 }, {

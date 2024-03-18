@@ -10,11 +10,9 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const validationSchema = Yup.object({
-    editionNumber: Yup.number()
+    volumeNumber: Yup.number()
         .required('Required'),
-    publicationDate: Yup.date()
-        .required('Required'),
-    changes: Yup.string()
+    publicationYear: Yup.date()
         .required('Required'),
     pdfLink: Yup.string().required('Required'),
 });
@@ -33,8 +31,8 @@ const config = {
 };
 
 
-const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
-    const bookId = useParams().id;
+const AddVolumeModal = ({ type, onClose, isOpen, editionData, refetch }) => {
+    const itemId = useParams().id;
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const [addedPdfs, setAddedPdfs] = useState();
@@ -48,19 +46,18 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
         setIsLoading(true);
         try {
             const data = {
-                editionNumber: values.editionNumber,
-                publicationDate: values.publicationDate,
-                changes: values.changes
-                , pdfLink: values.pdfLink
+                volumeNumber: values.volumeNumber,
+                publicationYear: values.publicationYear,
+                pdfLink: values.pdfLink
             };
             const response = editionData ?
-                await axios.put(`/api/admin/books/${bookId}/editions/${editionData._id}`, data, {
+                await axios.put(`/api/admin/${type}/${itemId}/volumes/${editionData._id}`, data, {
                     headers: {
                         Authorization: "Bearer " + token,
                         'Content-Type': 'application/json'
                     },
                 })
-                : await axios.post(`/api/admin/books/${bookId}/editions`, data, {
+                : await axios.post(`/api/admin/${type}/${itemId}/volumes`, data, {
                     headers: {
                         Authorization: "Bearer " + token,
                         'Content-Type': 'application/json'
@@ -68,7 +65,7 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
                 });
             if (response) {
                 toast.update(id, {
-                    render: "Edition added successfully",
+                    render: "Volume added successfully",
                     type: "success",
                     ...config,
                     isLoading: false,
@@ -104,7 +101,6 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
             })
             .then((response) => {
                 const { data: filename } = response;
-
                 setFieldValueRef.current('pdfLink', filename[0]);
                 setAddedPdfs(filename[0])
                 if (response) {
@@ -135,13 +131,12 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
 
     const initialValues = editionData
         ? {
-            editionNumber: editionData.editionNumber,
-            publicationDate: editionData.publicationDate,
-            changes: editionData.changes,
+            volumeNumber: editionData.volumeNumber,
+            publicationYear: editionData.publicationYear,
             pdfLink: editionData.pdfLink
         }
         : {
-            editionNumber: '', publicationDate: '', changes: '', pdfLink: ''
+            volumeNumber: '', publicationYear: '', changes: '', pdfLink: ''
         };
 
     useEffect(() => {
@@ -162,33 +157,26 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
                     {({ values, errors, touched, handleSubmit, isSubmitting
                         , handleBlur, setFieldValue,
                         handleChange }) => {
-                        const isFormFilled = values.editionNumber && values.publicationDate && values.changes && values.pdfLink
+                        const isFormFilled = values.volumeNumber && values.publicationYear && values.pdfLink
                         setFieldValueRef.current = setFieldValue;
                         return <Form
                             onSubmit={handleSubmit}
                             className="flex flex-col gap-[2vh] p-[4vh]"
                         >
-                            <h1 className="text-[4.5vh]">Add a new edition:</h1>
+                            <h1 className="text-[4.5vh]">Add a new Volume:</h1>
                             <div className="form-control">
                                 <div className="form-control-input">
-                                    <label htmlFor="editionNumber">Edition number</label>
-                                    <Field type="number" name="editionNumber" placeholder="Put the edition number." />
-                                    <ErrorMessage name="editionNumber" component="div"
+                                    <label htmlFor="volumeNumber">Volume number</label>
+                                    <Field type="number" min={1} name="volumeNumber" placeholder="Put the edition number." />
+                                    <ErrorMessage name="volumeNumber" component="div"
                                         className="invalid-feedback" />
                                 </div>
                                 <div className="form-control-input">
-                                    <label htmlFor="publicationDate">Publication date </label>
-                                    <Field type="date" name="publicationDate" placeholder="Put the publication date." />
-                                    <ErrorMessage name="publicationDate" component="div"
+                                    <label htmlFor="publicationYear">Publication date </label>
+                                    <Field type="date" name="publicationYear" placeholder="Put the publication date." />
+                                    <ErrorMessage name="publicationYear" component="div"
                                         className="invalid-feedback" />
                                 </div>
-                                <div className="form-control-input">
-                                    <label htmlFor="changes">Changes</label>
-                                    <Field type="text" as="textarea" name="changes" placeholder="Put the changes." />
-                                    <ErrorMessage name="changes" component="div"
-                                        className="invalid-feedback" />
-                                </div>
-
                                 <div className="form-control__collection">
                                     <label htmlFor="pdf" className="label-upload">Upload research&rsquo;s main PDF</label>
                                     {addedPdfs &&
@@ -267,4 +255,4 @@ const AddBookModal = ({ onClose, isOpen, editionData,refetch }) => {
     );
 };
 
-export default AddBookModal;
+export default AddVolumeModal;
