@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import { getBookById, getJournalById, getResearchById, getThesisById } from "../../constants/Http";
+import { getBookById, getJournalById, getResearchById, getThesisById, saveItemToLibrary } from "../../constants/Http";
 import Skeleton from "../../constants/Loading/SkeletonTwo/Skeleton";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +17,7 @@ const Thesis = () => {
   const dispatch = useDispatch();
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
-
+  const token = useSelector(state => state.auth.token);
   const user = useSelector(state => state.auth.data);
 
   const config = {
@@ -30,31 +30,20 @@ const Thesis = () => {
     progress: undefined,
     theme: "light",
   };
-
-  const addToLibraryHandler = async () => {
+  const handleSaveItem = async (item) => {
+    const signal = new AbortController().signal;
     const id = toast.loading("Please wait...");
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/`,
-        { number: 1 },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // console.log(response);
-      if (response) {
-        toast.update(id, {
-          render: "Thesis added to cart",
-          type: "success",
-          ...config,
-          isLoading: false,
-        });
-      }
+      await saveItemToLibrary({ signal, id: item.id, type: item.type, token: token });
+      toast.update(id, {
+        render: "Item added successfully",
+        type: "success",
+        ...config,
+        isLoading: false,
+      });
     } catch (error) {
       toast.update(id, {
-        render: "Failed to add thesis to cart",
+        render: "Item already added",
         type: "error",
         isLoading: false,
         ...config,
@@ -99,19 +88,22 @@ const Thesis = () => {
             <h2 className="text-[2vh]  font-bold">Supervised by :<p className="text-secondary">{" "}{data.thesis.supervisor}</p> </h2>
             <h2 className="text-[2vh]  font-bold">University :<p className="text-secondary">{" "}{data.thesis.university}</p> </h2>
             <h2 className="text-[2vh]  font-bold">Department :<p className="text-secondary">{" "}{data.thesis.department}</p> </h2>
-            
+
             <div>
               <p className="text-[2vh] font-bold">abstract :</p>
               <hr className="w-[100%]" />
               <p className="text-[1.7vh]">{data.thesis.abstract}</p>
             </div>
             <h2 className="text-[2vh]  font-semibold">citations :<p className="text-secondary">{" "}{data.thesis.citations}</p> </h2>
-            <h2 className="text-[2vh]  font-semibold">DOI :<a href={`http://${data.thesis.doi}`} target="_blank"  className="text-secondary">{" "}{data.thesis.doi}</a> </h2>
+            <h2 className="text-[2vh]  font-semibold">DOI :<a href={`http://${data.thesis.doi}`} target="_blank" className="text-secondary">{" "}{data.thesis.doi}</a> </h2>
             <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
-              <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
-                <button onClick={() => {
-                }}>Add to library </button>{" "}
+              {user ? <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px] cursor-pointer" onClick={() => handleSaveItem({ id: data.thesis._id, type: "theses" })} >
+                <button>Add to library </button>
               </div>
+                : <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
+                  <button onClick={() => {
+                  }}>Add to library </button>{" "}
+                </div>}
             </div>
           </div>
         </div>

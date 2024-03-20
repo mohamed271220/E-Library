@@ -177,7 +177,7 @@ const BookForm = () => {
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
-                <label htmlFor="author">Author</label>
+                <label htmlFor="author">Authors/Editors</label>
                 <Field type="text" name="author" placeholder="Write the name of the writer." />
                 <ErrorMessage name="author" component="div"
                   className="invalid-feedback" />

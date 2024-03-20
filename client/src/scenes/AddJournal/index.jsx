@@ -166,7 +166,7 @@ const JournalForm = () => {
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
-                <label htmlFor="publisher">Publisher</label>
+                <label htmlFor="publisher">Publishers/Editors</label>
                 <Field type="text" name="publisher" placeholder="Write the name of the writer." />
                 <ErrorMessage name="publisher" component="div"
                   className="invalid-feedback" />

@@ -32,7 +32,7 @@ const EncyclopediaForm = () => {
     queryFn: ({ signal }) => getEncyclopediaById({ signal, encId: id }),
     enabled: !!encId,
   })
-  const initialValues = data.encyclopedia
+  const initialValues = data
   ? {
       title: data.encyclopedia.title,
       publisher: data.encyclopedia.publisher,
@@ -163,7 +163,7 @@ const EncyclopediaForm = () => {
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
-                <label htmlFor="publisher">Publisher</label>
+                <label htmlFor="publisher">Publishers/Editors</label>
                 <Field type="text" name="publisher" placeholder="Write the name of the writer." />
                 <ErrorMessage name="publisher" component="div"
                   className="invalid-feedback" />

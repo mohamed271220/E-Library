@@ -269,7 +269,7 @@ const ResearchForm = () => {
                   className="invalid-feedback" />
               </div>
               <div className="form-control-input">
-                <label htmlFor="supervisor">Supervisor</label>
+                <label htmlFor="supervisor">Supervisors</label>
                 <Field type="text" name="supervisor" placeholder="Put the supervisor." />
                 <ErrorMessage name="supervisor" component="div"
                   className="invalid-feedback" />

@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import { getBookById, getEncyclopediaById, getJournalById } from "../../constants/Http";
+import { getBookById, getEncyclopediaById, getJournalById, saveItemToLibrary } from "../../constants/Http";
 import Skeleton from "../../constants/Loading/SkeletonTwo/Skeleton";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -20,6 +20,7 @@ const Encyclopedia = () => {
   const [openedIndex, setOpenedIndex] = useState(null);
   const [editionData, setEdition] = useState(null)
   const [addVolumeModalIsOpen, setAddVolumeModalIsOpen] = useState(false);
+  const token = useSelector(state => state.auth.token);
   function handleCloseAllModals() {
     setAddVolumeModalIsOpen(false);
   }
@@ -36,43 +37,33 @@ const Encyclopedia = () => {
     theme: "light",
   };
 
-  const addToLibraryHandler = async () => {
-    const id = toast.loading("Please wait...");
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/`,
-        { number: 1 },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // console.log(response);
-      if (response) {
-        toast.update(id, {
-          render: "Encyclopedia added to cart",
-          type: "success",
-          ...config,
-          isLoading: false,
-        });
-      }
-    } catch (error) {
-      toast.update(id, {
-        render: "Failed to add encyclopedia to cart",
-        type: "error",
-        isLoading: false,
-        ...config,
-      });
-    }
-  };
+
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['encyclopedia', id],
     queryFn: ({ signal }) => getEncyclopediaById({ signal, id }),
 
   })
 
-
+  const handleSaveItem = async (item) => {
+    const signal = new AbortController().signal;
+    const id = toast.loading("Please wait...");
+    try {
+      await saveItemToLibrary({ signal, id: item.id, type: item.type, token: token });
+      toast.update(id, {
+        render: "Item added successfully",
+        type: "success",
+        ...config,
+        isLoading: false,
+      });
+    } catch (error) {
+      toast.update(id, {
+        render: "Item already added",
+        type: "error",
+        isLoading: false,
+        ...config,
+      });
+    }
+  };
 
   if (isPending) {
     return <Skeleton type={'menu'} />;
@@ -108,10 +99,13 @@ const Encyclopedia = () => {
             </div>
             <h2 className="text-[2vh]  font-semibold">ISBN :<p className="text-secondary">{" "}{data.encyclopedia.ISBN}</p> </h2>
             <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
-              <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
-                <button onClick={() => {
-                }}>Add to library </button>{" "}
+              {user ? <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px] cursor-pointer" onClick={() => handleSaveItem({ id: data.encyclopedia._id, type: "encyclopedias" })}>
+                <button >Add to library </button>{" "}
               </div>
+                : <Link to={"/auth/login"} className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
+                  <button onClick={() => {
+                  }}>Add to library </button>{" "}
+                </Link>}
             </div>
           </div>
         </div>
@@ -173,7 +167,7 @@ const Encyclopedia = () => {
                 }
                 {
                   user && user.role === "admin" && <tr className="border-0">
-                    <td colSpan="4" className="text-center cursor-pointer"  onClick={() => { setEdition(null); setAddVolumeModalIsOpen(true) }}>
+                    <td colSpan="4" className="text-center cursor-pointer" onClick={() => { setEdition(null); setAddVolumeModalIsOpen(true) }}>
                       <button className="flex items-center justify-center">
                         <FiPlusCircle className="mr-2" color="green-400" />
                         Add new volumes

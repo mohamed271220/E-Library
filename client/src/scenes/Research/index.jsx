@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import { getBookById, getJournalById, getResearchById } from "../../constants/Http";
+import { getBookById, getJournalById, getResearchById, saveItemToLibrary } from "../../constants/Http";
 import Skeleton from "../../constants/Loading/SkeletonTwo/Skeleton";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ const Research = () => {
   const dispatch = useDispatch();
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
+  const token = useSelector(state => state.auth.token);
 
   const user = useSelector(state => state.auth.data);
 
@@ -31,30 +32,20 @@ const Research = () => {
     theme: "light",
   };
 
-  const addToLibraryHandler = async () => {
+  const handleSaveItem = async (item) => {
+    const signal = new AbortController().signal;
     const id = toast.loading("Please wait...");
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/`,
-        { number: 1 },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // console.log(response);
-      if (response) {
-        toast.update(id, {
-          render: "Research added to cart",
-          type: "success",
-          ...config,
-          isLoading: false,
-        });
-      }
+      await saveItemToLibrary({ signal, id: item.id, type: item.type, token: token });
+      toast.update(id, {
+        render: "Item added successfully",
+        type: "success",
+        ...config,
+        isLoading: false,
+      });
     } catch (error) {
       toast.update(id, {
-        render: "Failed to add research to cart",
+        render: "Item already added",
         type: "error",
         isLoading: false,
         ...config,
@@ -78,7 +69,7 @@ const Research = () => {
     <div className="w-full flex flex-col gap-3 relative">
       {
         user && user.role === "admin"
- &&
+        &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
           <Link to={`/admin/addResearch?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
           <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
@@ -104,10 +95,13 @@ const Research = () => {
             <h2 className="text-[2vh]  font-semibold">citations :<p className="text-secondary">{" "}{data.research.citations}</p> </h2>
             <h2 className="text-[2vh]  font-semibold">DOI :<p className="text-secondary">{" "}{data.research.doi}</p> </h2>
             <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
-              <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
-                <button onClick={() => {
-                }}>Add to library </button>{" "}
+              {user ? <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px] cursor-pointer" onClick={() => handleSaveItem({ id: data.research._id, type: "researches" })}>
+                <button>Add to library </button>{" "}
               </div>
+                : <Link to={"/auth/login"} className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
+                  <button onClick={() => {
+                  }}>Add to library </button>{" "}
+                </Link>}
             </div>
           </div>
         </div>
