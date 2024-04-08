@@ -27,6 +27,7 @@ import Thesis from "./scenes/Thesis";
 import NotFound from "./scenes/404";
 import Post from "./scenes/Post";
 import Profile from "./scenes/Profile";
+import Team from "./scenes/Team"
 
 axios.defaults.baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -96,6 +97,7 @@ const App = () => {
         <Route path="/theses/:id" element={<Thesis />} />
         <Route path="/news" element={<News />} />
         <Route path="/news/:id" element={<Post />} />
+        <Route path="/team" element={<Team />} />
         <Route path="/library" element={user ?
           <Profile /> : <Navigate to="/books" />} />
         {/* Admin routes  */}

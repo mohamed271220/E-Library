@@ -65,9 +65,9 @@ const Thesis = () => {
 
   return (
     <div className="w-full flex flex-col gap-3 relative">
-      {/* user && user.role === "admin" */}
+    
       {
-        true &&
+        user && user.role === "admin" &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
           <Link to={`/admin/addThesis?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
           <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
