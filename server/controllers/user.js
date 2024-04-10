@@ -7,7 +7,7 @@ const Thesis = require('../models/thesis');
 
 exports.getProfile = async (req, res, next) => {
     try {
-        const user = await User.findById(req.userId);
+        const user = await User.findById(req.userId).select('-password').populate('savedBooks savedJournals savedEncyclopedias savedResearches savedTheses');
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }

@@ -6,7 +6,7 @@ import EntryLayout from "./scenes/EntryLayout";
 import Login from "./scenes/Auth/Login";
 import Signup from "./scenes/Auth/Signup";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { authActions } from "./store/authSlice";
 import AddBook from "./scenes/AddBook";
 import AddCategory from "./scenes/AddCategory";
@@ -28,6 +28,7 @@ import NotFound from "./scenes/404";
 import Post from "./scenes/Post";
 import Profile from "./scenes/Profile";
 import Team from "./scenes/Team"
+import LoadingSpinner from "./constants/Loading/LoadingSpinner/LoadingSpinner";
 
 axios.defaults.baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -40,6 +41,8 @@ const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(state => state.auth.data);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
     if (
@@ -56,10 +59,13 @@ const App = () => {
         })
       );
     }
+    setIsLoading(false);
   }, [dispatch]);
+
   var tokenExpirationDate = useSelector(
     (state) => state.auth.tokenExpirationDate
   );
+
   useEffect(() => {
     const checkDate = async () => {
       try {
@@ -80,6 +86,14 @@ const App = () => {
     };
     checkDate();
   }, [dispatch, tokenExpirationDate, navigate]);
+
+  if (isLoading) return (
+    <div className="flex h-screen w-full items-center justify-center bg-primary">
+      <div className="flex h-[150px] w-[150px] items-center justify-center rounded-lg bg-white">
+        <LoadingSpinner />
+      </div>
+    </div>
+  )
 
   return (
     <Routes>

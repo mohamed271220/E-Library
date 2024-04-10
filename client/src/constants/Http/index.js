@@ -256,14 +256,21 @@ export async function saveItemToLibrary({ signal, id, type, token }) {
     const data = await response.json();
     return data;
 }
-export async function removeItemFromLibrary({ signal, id, type }) {
-    const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/api/library/remove-from-saved-${type}/${id}`, { signal });
-    if (!response.ok) {
-        const error = new Error("An error occurred while removing the item to the library");
-        error.code = response.status;
-        error.info = await response.json();
-        throw error;
-    }
-    const data = await response.json();
-    return data;
+
+
+export async function getProfile({ signal, token }) {
+    const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/api/user/profile`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+            , 'Content-Type': 'application/json'
+        }
+    }, { signal });
+       if (!response.ok) {
+            const error = new Error("An error occurred while saving the item to the library");
+            error.code = response.status;
+            error.info = await response.json();
+            throw error;
+        }
+        const data = await response.json();
+        return data;
 }

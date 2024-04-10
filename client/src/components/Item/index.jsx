@@ -1,7 +1,7 @@
 import { AiFillPlusCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
-const Item = ({ item, user, type, handleSaveItem }) => {
+const Item = ({ item, user, type, handleSaveItem, isSaved, handleRemoveItem }) => {
     return (
         <Link to={`/${type}/${item._id}`} className="relative w-[28vh]  bg-[#F4F5F7]" >
             <div>
@@ -29,13 +29,25 @@ const Item = ({ item, user, type, handleSaveItem }) => {
             </div>
             <div
                 className="h-full hidden lg:flex flex-col justify-center items-center w-[28vh]  absolute opacity-0  bg-slate-950/30 text-white bottom-0 transition-all hover:bottom-30 hover:h-220 hover:opacity-100 hover:shadow-lg shadow-dim-blue hover:z-10" >
-                {user ? <button onClick={(e) => {
+                {
+                    user && !isSaved && <button onClick={(e) => {
                     e.preventDefault();
                     handleSaveItem({ id: item._id, type: type })
                 }}
                     className="bg-white rounded hover:shadow-lg shadow-white text-dim-blue text-[2vh] font-bold opacity-1 py-[1.5vh] px-[4vh] mb-[1vh]">
                     Save to library
-                </button> : <Link className="bg-white rounded hover:shadow-lg shadow-white text-dim-blue text-[2vh] font-bold opacity-1 py-[1.5vh] px-[4vh] mb-[1vh]" to='/auth/login'>
+                </button>
+                }
+                {
+                    user && isSaved && <button onClick={(e) => {
+                    e.preventDefault();
+                    handleRemoveItem({ id: item._id, type: type })
+                }}
+                    className="bg-white rounded hover:shadow-lg shadow-white text-red-500 text-[1.7vh] font-bold opacity-1 py-[1.5vh] px-[4vh] mb-[1vh]">
+                    Remove from library
+                </button>
+                }
+                {!user && <Link className="bg-white rounded hover:shadow-lg shadow-white text-dim-blue text-[2vh] font-bold opacity-1 py-[1.5vh] px-[4vh] mb-[1vh]" to='/auth/login'>
                     Save to library
                 </Link>
                 }

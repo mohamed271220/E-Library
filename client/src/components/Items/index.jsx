@@ -22,7 +22,9 @@ const Items = ({ items, type, error, isError }) => {
     const user = useSelector((state) => state.auth.data);
     const token = useSelector((state) => state.auth.token);
     if (isError) {
-        return <ErrorBlock title='Something went wrong' message={error} />
+        return <div className='flex h-[100vh] justify-center items-center'>
+            <ErrorBlock title='Something went wrong' message={error} />
+        </div>
     }
 
     const handleSaveItem = async (item) => {

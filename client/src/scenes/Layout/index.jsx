@@ -50,14 +50,14 @@ const Layout = () => {
   };
   return (
     <div className='relative flex flex-col gap-[20vh]'>
-      <div className="grid grid-cols-12 justify-center">
+      <div className="grid grid-cols-12 justify-center ">
         <IconContext.Provider value={{ color: "#000" }}>
-          <div className={`navbar drop-shadow-lg transition-all w-full col-span-12 fixed ${scrolled && !sidebar ? 'bg-dim-blue' : 'bg-white'}`}>
+          <div className={`navbar  drop-shadow-lg transition-all w-full col-span-12 fixed ${scrolled && !sidebar ? 'bg-dim-blue' : 'bg-white'}`}>
             <Link to="#" className="menu-bars">
               <FaIcons.FaBars color="#bac1c9" onClick={showSidebar} />
             </Link>
             <>
-              {user ? <div className="flex justify-between items-center text-base m-[1vh] gap-3">
+              {user ? <Link to={"/library"} className="flex justify-between items-center text-base m-[1vh] gap-3 ">
                 <div className="text-left">
                   <p className={`font-semi text-[2vh] ${scrolled && !sidebar ? 'text-[#bac1c9]' : ''} `}>
                     {user.name}
@@ -68,7 +68,7 @@ const Layout = () => {
                   src={user.image}
                   alt="pfp"
                 />
-              </div> : <NavLink className='btn-3 flex items-center border-none shadow-xl bg-gray-200 text-dim-blue' to="/auth/login" >
+              </Link> : <NavLink className='btn-3 flex items-center border-none shadow-xl bg-gray-200 text-dim-blue' to="/auth/login" >
                 <span className="m-0">Login</span>
               </NavLink>}
             </>
@@ -110,7 +110,7 @@ const Layout = () => {
               }
             </ul>
           </nav>
-          <div className={`${sidebar ? "content col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"}  bg-gray-100 rounded-lg shadow-lg  bg-opacity-30 mt-[90px] w-full h-full `}>
+          <div className={`${sidebar ? "content col-span-9 ml-[3vh] transform translate-x-64 transition-transform duration-200 " : "content lg:col-end-12 lg:col-start-2 lg:col-span-10 col-span-10 col-start-2 col-end-12"}  bg-gray-100 rounded-lg shadow-lg  bg-opacity-30 mt-[90px] w-full h-full  `}>
             <ScrollToTop />
             <Outlet />
             <Footer />

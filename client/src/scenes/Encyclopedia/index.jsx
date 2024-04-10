@@ -41,7 +41,6 @@ const Encyclopedia = () => {
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['encyclopedia', id],
     queryFn: ({ signal }) => getEncyclopediaById({ signal, id }),
-
   })
 
   const handleSaveItem = async (item) => {
