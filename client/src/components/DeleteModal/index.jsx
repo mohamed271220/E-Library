@@ -49,6 +49,7 @@ const DeleteModal = ({ type, onClose, isOpen, id  }) => {
                 <button className="btn-3 bg-white" onClick={onClose}>Cancel</button>
                 </div>
             </div>
+            
             </Modal>
             <ToastContainer
                 position="top-center"
