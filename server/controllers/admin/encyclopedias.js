@@ -55,7 +55,7 @@ exports.deleteEncyclopedia = async (req, res, next) => {
         if (!encyclopedia) {
             throw new Error('Encyclopedia not found');
         }
-        await encyclopedia.remove();
+        await Encyclopedia.deleteOne({ _id: encyclopediaId });
         res.status(200).json({ message: "Encyclopedia deleted successfully" });
     }
     catch (err) {

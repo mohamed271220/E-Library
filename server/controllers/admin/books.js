@@ -71,10 +71,12 @@ exports.deleteBook = async (req, res, next) => {
         if (!book) {
             throw new Error('Book not found');
         }
-        const category = await Category.findById(book.category);
-        category.books.pull(book);
-        await category.save(sess);
-        await book.remove(sess);
+        if (book.category) {
+            const category = await Category.findById(book.category);
+            category.books.pull(book);
+            await category.save(sess);
+        }
+        await Book.deleteOne({ _id: book._id }, { session: sess });
         await sess.commitTransaction();
         sess.endSession();
         res.status(200).json({ message: "Book deleted successfully" });

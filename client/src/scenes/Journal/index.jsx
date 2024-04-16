@@ -12,17 +12,30 @@ import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { FiChevronDown, FiEdit2, FiPlusCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import AddVolumeModal from "../../components/AddVolume";
+import DeleteModal from "../../components/DeleteModal";
+import DeleteVolAndEditionsModal from "../../components/DeleteVolAndEditionsModal";
 
 
 const Journal = () => {
   const dispatch = useDispatch();
   const id = useParams().id;
+  const token = useSelector(state => state.auth.token);
   const [openedIndex, setOpenedIndex] = useState(null);
   const [editionData, setEdition] = useState(null)
   const [addVolumeModalIsOpen, setAddVolumeModalIsOpen] = useState(false);
-  const token = useSelector(state => state.auth.token);
+  const [deleteBookModalIsOpen, setDeleteBookModalIsOpen] = useState(false);
+  const [deleteEditionModalIsOpen, setEditionBookModalIsOpen] = useState(false);
+  const [vid, setVid] = useState(null)
+  function handleDeleteBookModalOpen() {
+    setDeleteBookModalIsOpen(true);
+  }
+  function handleDeleteEditionModalOpen() {
+    setEditionBookModalIsOpen(true);
+  }
   function handleCloseAllModals() {
     setAddVolumeModalIsOpen(false);
+    setDeleteBookModalIsOpen(false);
+    setEditionBookModalIsOpen(false);
   }
   const user = useSelector(state => state.auth.data);
 
@@ -66,7 +79,9 @@ const Journal = () => {
 
 
   if (isPending) {
-    return <Skeleton type={'menu'} />;
+    return <div className="h-[100vh] w-full justify-center items-center">
+      <Skeleton type={'menu'} />;
+    </div>
   }
   if (isError) {
     return <div>Error: {error.message}</div>;
@@ -75,11 +90,14 @@ const Journal = () => {
   return (
     <div className="w-full flex flex-col gap-3 relative">
       {addVolumeModalIsOpen && <AddVolumeModal type={"journals"} editionData={editionData} user={user} isOpen={addVolumeModalIsOpen} onClose={handleCloseAllModals} refetch={refetch} />}
+      {deleteBookModalIsOpen && <DeleteModal isOpen={deleteBookModalIsOpen} onClose={handleCloseAllModals} type={'journals'} id={id} refetch={refetch} />}
+      {deleteEditionModalIsOpen && <DeleteVolAndEditionsModal isOpen={deleteEditionModalIsOpen} onClose={handleCloseAllModals} type={'journals'} id={id} vid={vid} refetch={refetch} />}
+
       {
         user && user.role === "admin" &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
           <Link to={`/admin/addJournal?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
-          <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
+          <button onClick={handleDeleteBookModalOpen} className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
         </div>
       }
       <div className="journal flex flex-col gap-2 ">
@@ -147,7 +165,7 @@ const Journal = () => {
                             user && user.role === "admin" && (
                               <td>
                                 <button onClick={() => { setEdition(volume); setAddVolumeModalIsOpen(true) }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white"><FiEdit2 color="white" /></button>
-                                <button className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white ml-2"><AiFillDelete color="white" /></button>
+                                <button onClick={() => { setVid(volume.id); handleDeleteEditionModalOpen(); }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white ml-2"><AiFillDelete color="white" /></button>
                               </td>
                             )}
                         </tr>

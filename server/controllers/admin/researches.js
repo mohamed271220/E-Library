@@ -87,7 +87,7 @@ exports.deleteResearch = async (req, res, next) => {
         if (!research) {
             throw new Error('Research not found');
         }
-        await research.remove();
+        await Research.findByIdAndRemove(researchId);
         res.status(200).json({ message: "Research deleted successfully" });
     }
     catch (err) {

@@ -53,7 +53,7 @@ exports.deleteJournal = async (req, res, next) => {
         if (!journal) {
             throw new Error('Journal not found');
         }
-        await journal.remove();
+        await Journal.findByIdAndDelete(journalId);
         res.status(200).json({ message: "Journal deleted successfully" });
     }
     catch (err) {

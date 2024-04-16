@@ -97,7 +97,7 @@ exports.deleteThesis = async (req, res, next) => {
         if (!thesis) {
             throw new Error('Thesis not found');
         }
-        await thesis.remove();
+        await Thesis.findByIdAndDelete(thesisId);
         res.status(200).json({ message: "Thesis deleted successfully" });
     }
     catch (err) {

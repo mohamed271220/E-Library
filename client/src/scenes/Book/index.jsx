@@ -11,10 +11,13 @@ import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { FiChevronDown, FiEdit2, FiPlusCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import AddEdition from '../../components/AddEdition';
+import DeleteModal from "../../components/DeleteModal";
+import DeleteVolAndEditionsModal from "../../components/DeleteVolAndEditionsModal";
 
 const Product = () => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
+  const [vid, setVid] = useState(null)
   const id = useParams().id;
   const [openedIndex, setOpenedIndex] = useState(null);
   const [editionData, setEdition] = useState(null)
@@ -70,8 +73,11 @@ const Product = () => {
   })
 
   if (isPending) {
-    return <Skeleton type={'menu'} />;
+    return <div className="h-[100vh] w-full flex justify-center items-center">
+      <Skeleton type={'menu'} />;
+    </div>
   }
+
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
@@ -99,118 +105,120 @@ const Product = () => {
   };
   return (
 
-      <div className="w-full flex flex-col gap-3 relative">
-        {addEditionModalIsOpen && <AddEdition editionData={editionData} user={user} isOpen={addEditionModalIsOpen} onClose={handleCloseAllModals} refetch={refetch} />}
-        {
-          user && user.role === "admin"
-          &&
-          <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
-            <Link to={`/admin/addBook?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
-            <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
+    <div className="w-full flex flex-col gap-3 relative">
+      {addEditionModalIsOpen && <AddEdition editionData={editionData} user={user} isOpen={addEditionModalIsOpen} onClose={handleCloseAllModals} refetch={refetch} />}
+      {deleteBookModalIsOpen && <DeleteModal isOpen={deleteBookModalIsOpen} onClose={handleCloseAllModals} type={'books'} id={id} refetch={refetch} />}
+      {deleteEditionModalIsOpen && <DeleteVolAndEditionsModal isOpen={deleteEditionModalIsOpen} onClose={handleCloseAllModals} type={'books'} id={id} vid={vid} refetch={refetch} />}
+      {
+        user && user.role === "admin"
+        &&
+        <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
+          <Link to={`/admin/addBook?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
+          <button onClick={handleDeleteBookModalOpen} className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
+        </div>
+      }
+      <div className="product flex flex-col gap-2 ">
+        <div className="info w-full md:px-9 px-4 gap-4 py-[2vh] flex md:flex-row flex-col ">
+          {/* images  */}
+          <div className="md:mx-0 mx-auto flex lg:flex-row flex-col-reverse gap-[2vh] w-full md:w-[50%]">
+            <img className="md:w-[85%] md:h-[110vh] rounded-lg" src={data.book.image} alt="" />
           </div>
-        }
-        <div className="product flex flex-col gap-2 ">
-          <div className="info w-full md:px-9 px-4 gap-4 py-[2vh] flex md:flex-row flex-col ">
-            {/* images  */}
-            <div className="md:mx-0 mx-auto flex lg:flex-row flex-col-reverse gap-[2vh] w-full md:w-[50%]">
-              <img className="md:w-[85%] md:h-[110vh] rounded-lg" src={data.book.image} alt="" />
+          {/* details */}
+          <div className="flex flex-col gap-4 w-full md:w-[40%]">
+            <h2 className="text-[4.5vh] fond-semibold">{data.book.title}</h2>
+            <h2 className="text-[2vh]  font-bold">Written By :<p className="text-secondary">{" "}{data.book.author}</p> </h2>
+            <div>
+              <p className="text-[2vh] font-bold">Description :</p>
+              <hr className="w-[100%]" />
+              <p className="text-[1.7vh]">{data.book.description}</p>
             </div>
-            {/* details */}
-            <div className="flex flex-col gap-4 w-full md:w-[40%]">
-              <h2 className="text-[4.5vh] fond-semibold">{data.book.title}</h2>
-              <h2 className="text-[2vh]  font-bold">Written By :<p className="text-secondary">{" "}{data.book.author}</p> </h2>
-              <div>
-                <p className="text-[2vh] font-bold">Description :</p>
-                <hr className="w-[100%]" />
-                <p className="text-[1.7vh]">{data.book.description}</p>
+            <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
+              {user ? <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px] cursor-pointer" onClick={() => handleSaveItem({ id: data.book._id, type: "books" })}>
+                <button  >Add to library </button>
               </div>
-              <div className="flex flex-row items-center  text-[3vh] gap-[3vh] mt-[3vh]">
-                {user ? <div className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px] cursor-pointer" onClick={() => handleSaveItem({ id: data.book._id, type: "books" })}>
+                : <Link to={"/auth/login"} className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
                   <button  >Add to library </button>
-                </div>
-                  : <Link to={"/auth/login"} className="btn-3 border-none bg-primary hover:py-[1.5vh] hover:px-[7vh] hover:rounded-[5px]">
-                    <button  >Add to library </button>
-                  </Link>}
-              </div>
-            </div>
-          </div>
-          {/* editions */}
-          <div className="editions w-full md:px-9 px-4 gap-4 py-[2vh] flex  flex-col ">
-            <h2 className="text-[5vh] fond-semibold">Editions</h2>
-            <div className="flex flex-col gap-4 w-full overflow-auto">
-              <table className="table-auto w-full ">
-                <thead className="bg-gray-100 ">
-                  <tr>
-                    <th>Edition Number</th>
-                    <th>Publication Date</th>
-                    <th> - </th>
-
-                    {
-                      user && user.role === "admin"
-                      && (
-                        <th>Actions</th>
-                      )}
-                  </tr>
-                </thead>
-                <tbody>
-
-                  {
-                    data.book.editions.map((edition, index) => {
-                      return (
-                        <React.Fragment key={index}>
-                          <tr
-                            onClick={() => setOpenedIndex(index === openedIndex ? null : index)}
-                            className={`cursor-pointer ${openedIndex === index ? 'bg-blue-200 border-b-0' : ''}`}
-                          >
-                            <td>{edition.editionNumber}</td>
-                            <td>{edition.publicationDate}</td>
-                            <td>
-                              <button className="btn-3 px-[1vh] bg-dim-blue text-[1.6vh] font-normal text-white flex items-center">
-                                open
-                                <FiChevronDown color="white" className={`transition-transform duration-500 ml-2 ${openedIndex === index ? 'rotate-180' : ''}`} />
-                              </button>
-                            </td>
-                            {
-                              user && user.role === "admin"
-                              && (
-                                <td>
-                                  <button onClick={() => { setEdition(edition); setAddEditionModalIsOpen(true) }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white"><FiEdit2 color="white" /></button>
-                                  <button className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white ml-2"><AiFillDelete color="white" /></button>
-                                </td>
-                              )}
-                          </tr>
-                          <AnimatePresence>
-                            {openedIndex === index && (
-                              <motion.tr className="bg-blue-100" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                                <td colSpan="4">
-                                  <div className="flex flex-col ">
-                                    <h2 className="text-[1.9vh] font-bold">Changes :</h2>
-                                    <p className="text-[1.6vh] py-[2vh]">{edition.changes}</p>
-                                  </div>
-                                  <iframe src={edition.pdfLink} style={{ width: '100%', height: '500px' }}></iframe>
-                                </td>
-                              </motion.tr>
-                            )}
-                          </AnimatePresence>
-                        </React.Fragment>
-                      )
-                    })
-                  }
-                  {
-                    user && user.role === "admin"
-                    && <tr className="border-0">
-                      <td colSpan="4" className="text-center cursor-pointer" onClick={() => { setEdition(null); setAddEditionModalIsOpen(true) }}>
-                        <button className="flex items-center justify-center" >
-                          <FiPlusCircle className="mr-2" color="green-400" />
-                          Add new editions
-                        </button>
-                      </td>
-                    </tr>}
-                </tbody>
-              </table>
+                </Link>}
             </div>
           </div>
         </div>
+        {/* editions */}
+        <div className="editions w-full md:px-9 px-4 gap-4 py-[2vh] flex  flex-col ">
+          <h2 className="text-[5vh] fond-semibold">Editions</h2>
+          <div className="flex flex-col gap-4 w-full overflow-auto">
+            <table className="table-auto w-full ">
+              <thead className="bg-gray-100 ">
+                <tr>
+                  <th>Edition Number</th>
+                  <th>Publication Date</th>
+                  <th> - </th>
+
+                  {
+                    user && user.role === "admin"
+                    && (
+                      <th>Actions</th>
+                    )}
+                </tr>
+              </thead>
+              <tbody>
+
+                {
+                  data.book.editions.map((edition, index) => {
+                    return (
+                      <React.Fragment key={index}>
+                        <tr
+                          onClick={() => setOpenedIndex(index === openedIndex ? null : index)}
+                          className={`cursor-pointer ${openedIndex === index ? 'bg-blue-200 border-b-0' : ''}`}
+                        >
+                          <td>{edition.editionNumber}</td>
+                          <td>{edition.publicationDate}</td>
+                          <td>
+                            <button className="btn-3 px-[1vh] bg-dim-blue text-[1.6vh] font-normal text-white flex items-center">
+                              open
+                              <FiChevronDown color="white" className={`transition-transform duration-500 ml-2 ${openedIndex === index ? 'rotate-180' : ''}`} />
+                            </button>
+                          </td>
+                          {
+                            user && user.role === "admin"
+                            && (
+                              <td>
+                                <button onClick={() => { setEdition(edition); setAddEditionModalIsOpen(true) }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white"><FiEdit2 color="white" /></button>
+                                <button onClick={() => { setVid(edition._id); handleDeleteEditionModalOpen(); }} className="btn-3 p-[1.5vh] bg-dim-blue  text-[1.6vh] font-normal text-white ml-2"><AiFillDelete color="white" /></button>
+                              </td>
+                            )}
+                        </tr>
+                        <AnimatePresence>
+                          {openedIndex === index && (
+                            <motion.tr className="bg-blue-100" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                              <td colSpan="4">
+                                <div className="flex flex-col ">
+                                  <h2 className="text-[1.9vh] font-bold">Changes :</h2>
+                                  <p className="text-[1.6vh] py-[2vh]">{edition.changes}</p>
+                                </div>
+                                <iframe src={edition.pdfLink} style={{ width: '100%', height: '500px' }}></iframe>
+                              </td>
+                            </motion.tr>
+                          )}
+                        </AnimatePresence>
+                      </React.Fragment>
+                    )
+                  })
+                }
+                {
+                  user && user.role === "admin"
+                  && <tr className="border-0">
+                    <td colSpan="4" className="text-center cursor-pointer" onClick={() => { setEdition(null); setAddEditionModalIsOpen(true) }}>
+                      <button className="flex items-center justify-center" >
+                        <FiPlusCircle className="mr-2" color="green-400" />
+                        Add new editions
+                      </button>
+                    </td>
+                  </tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       <ToastContainer
         position="top-center"
         autoClose={2000}
@@ -223,8 +231,8 @@ const Product = () => {
         pauseOnHover
         theme="light"
       />
-      </div>
-  
+    </div>
+
   );
 };
 

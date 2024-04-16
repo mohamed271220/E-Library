@@ -11,6 +11,7 @@ import { AiFillDelete, AiFillStar } from "react-icons/ai";
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { FiChevronDown, FiEdit2, FiPlusCircle } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
+import DeleteModal from "../../components/DeleteModal";
 
 
 const Thesis = () => {
@@ -19,6 +20,16 @@ const Thesis = () => {
   const [openedIndex, setOpenedIndex] = useState(null);
   const token = useSelector(state => state.auth.token);
   const user = useSelector(state => state.auth.data);
+
+  const [deleteBookModalIsOpen, setDeleteBookModalIsOpen] = useState(false);
+  function handleDeleteBookModalOpen() {
+    setDeleteBookModalIsOpen(true);
+  }
+  function handleCloseAllModals() {
+    setDeleteBookModalIsOpen(false);
+  }
+
+
 
   const config = {
     position: "top-center",
@@ -57,7 +68,9 @@ const Thesis = () => {
   })
 
   if (isPending) {
-    return <Skeleton type={'menu'} />;
+    return <div className="h-[100vh] w-full justify-center items-center">
+      <Skeleton type={'menu'} />;
+    </div>
   }
   if (isError) {
     return <div>Error: {error.message}</div>;
@@ -65,12 +78,12 @@ const Thesis = () => {
 
   return (
     <div className="w-full flex flex-col gap-3 relative">
-    
+      {deleteBookModalIsOpen && <DeleteModal isOpen={deleteBookModalIsOpen} onClose={handleCloseAllModals} type={'theses'} id={id} />}
       {
         user && user.role === "admin" &&
         <div className="flex absolute bg-black rounded-lg bg-opacity-15 gap-[1vh] top-0 right-0 p-[1vh] ">
           <Link to={`/admin/addThesis?id=${id}`} className="btn-3 border-none bg-dim-blue p-3"><FiEdit2 color="white" /></Link>
-          <button className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
+          <button onClick={handleDeleteBookModalOpen} className="btn-3 border-none bg-dim-blue p-3"><AiFillDelete color="white" /></button>
         </div>
       }
       <div className="thesis flex flex-col gap-2 ">
